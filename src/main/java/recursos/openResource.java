@@ -18,6 +18,7 @@ import utilidades.ResponseMonitor;
 public class openResource {
 	
 	@GET
+	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public static Response open() {
 		Datastore datastore = MorphiaDB.getDatastore();
