@@ -6,8 +6,6 @@ import org.mongodb.morphia.Morphia;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 
-import mundo.Mensaje;
-
 public class MorphiaDB {
 	
 	private static String MONGO_URI = "mongodb://monitorsocial:-Ecvyfawaze123@ds023118.mlab.com:23118/monitor-social-crm"; 
