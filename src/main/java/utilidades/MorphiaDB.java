@@ -4,6 +4,9 @@ import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+
+import mundo.Mensaje;
 
 public class MorphiaDB {
 	
@@ -16,7 +19,8 @@ public class MorphiaDB {
 	public static Datastore getDatastore() {
 		if(datastore == null) {
 			morphia.mapPackage("mundo");
-			datastore = morphia.createDatastore(new MongoClient(MONGO_URI), "monitor-social-crm");
+			MongoClientURI mouri = new MongoClientURI(MONGO_URI);
+			datastore = morphia.createDatastore(new MongoClient(mouri), "monitor-social-crm");
 		}
 		return datastore;
 	}
