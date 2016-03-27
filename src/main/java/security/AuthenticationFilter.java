@@ -87,11 +87,6 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
     }
     private boolean isUserAllowed(final String id, final String token, final Set<String> rolesSet) {
         String userRole = AuthenticationDAO.authByID(id, token);
-        
-        if(rolesSet.contains(userRole)) {
-            return true;
-        }
-        
-        return false;
+        return rolesSet.contains(userRole);
     }
 }

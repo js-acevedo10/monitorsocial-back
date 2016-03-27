@@ -1,9 +1,65 @@
 package dao;
 
+import java.util.List;
+
+import javax.ws.rs.core.Response;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
+import org.glassfish.jersey.internal.util.Base64;
+import org.mongodb.morphia.query.Query;
+
+import mundo.Empresa;
+import security.Roles;
+import utilidades.MorphiaDB;
+import utilidades.ResponseMonitor;
+
 public class AuthenticationDAO {
 
-	public static String authByID(String id, String token) {
-		return "Hola";
+	private static String json = "";
+	private static Response.Status status = Response.Status.OK;
+	
+	public static Response login(String email, String password) {
+		Query<Empresa> q = MorphiaDB.getDatastore().createQuery(Empresa.class)
+				.field("email").equal(email)
+				.field("password").equal(password);
+		List<Empresa> user = q.asList();
+		if(user != null && !user.isEmpty()) {
+			Empresa r = user.get(0);
+			String at = "Basic " + Base64.encodeAsString(r.getId()) + ":" + Base64.encodeAsString(r.getPassword());
+			Document resp = new Document()
+					.append("id", r.getId())
+					.append("name", r.getName())
+					.append("twitterId", r.getTwitterId())
+					.append("accessToken", at);
+			json = resp.toJson();
+			status = Response.Status.OK;
+		} else {
+			json = "{\"error\":\"not a valid user\"}";
+			status = Response.Status.BAD_REQUEST;
+		}
+		return ResponseMonitor.buildResponse(json, status);
 	}
 	
+	public static String authByID(String id, String token) {
+		json = "{\"error\":\"not a valid user\"}";
+		Query<Empresa> q = MorphiaDB.getDatastore().createQuery(Empresa.class)
+				.field("id").equal(new ObjectId(id))
+				.field("password").equal(token);
+		List<Empresa> user = q.asList();
+		if(user != null && !user.isEmpty()) {
+			json = Roles.EMPRESA;
+		}
+		return json;
+	}
+	
+	public static void main(String[] args) {
+		Empresa emp = new Empresa("Nike", "nikemonitor", "123", "juan@me.com", "Bogota", "Cundinamarca", "Colombia", "@Nike");
+		try {
+			MorphiaDB.getDatastore().save(emp);
+		} catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		System.out.println(login("juan@me.com", "MTIz").getEntity());
+	}
 }

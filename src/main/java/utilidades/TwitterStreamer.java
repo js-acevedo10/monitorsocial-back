@@ -1,6 +1,5 @@
 package utilidades;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -24,6 +23,8 @@ import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
 
 public class TwitterStreamer {
+	
+	private static Twitter4jStatusClient twitter4jStatusClient;
 	
 	private static StatusListener statusListener = new StatusListener() {
 		
@@ -59,7 +60,7 @@ public class TwitterStreamer {
 		}
 	};
 	
-	public static void oauth(String consumerKey, String consumerSecret, String token, String tokenSecret, List<String> trackTerms) throws InterruptedException {
+	public static void startListening(String consumerKey, String consumerSecret, String token, String tokenSecret, List<String> trackTerms) throws InterruptedException {
 		BlockingQueue<String> queue = new LinkedBlockingQueue<String>(1000);
 		StatusesFilterEndpoint hosebirdEndpoint = new StatusesFilterEndpoint();
 		hosebirdEndpoint.trackTerms(trackTerms);
@@ -73,13 +74,17 @@ public class TwitterStreamer {
 				.build();
 		int numProcessingThreads = 4;
 		ExecutorService service = Executors.newFixedThreadPool(numProcessingThreads);
-		Twitter4jStatusClient twitter4jStatusClient = new Twitter4jStatusClient(client, queue, Lists.newArrayList(statusListener), service);
+		twitter4jStatusClient = new Twitter4jStatusClient(client, queue, Lists.newArrayList(statusListener), service);
 		
 		twitter4jStatusClient.connect();
-		System.out.println("Connected Listener, vigilante mode on: " + trackTerms.get(0));
+		System.out.println("Connected Listener, vigilante mode on: " + trackTerms.toString());
 		for (int threads = 0; threads < numProcessingThreads; threads++) {
 			// This must be called once per processing thread
 			twitter4jStatusClient.process();
 		}
+	}
+	
+	public static void stopListening() {
+		twitter4jStatusClient.stop();
 	}
 }

@@ -14,11 +14,4 @@ import dao.TwitterDAO;
 @Path("/twitter")
 public class TwitterResource {
 
-	@PermitAll
-	@GET
-	@Path("/{twitterTerm}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addTwitterTerm(@PathParam("twitterTerm") String twitterTerm) {
-		return TwitterDAO.addTwitterTerm(twitterTerm);
-	}
 }
