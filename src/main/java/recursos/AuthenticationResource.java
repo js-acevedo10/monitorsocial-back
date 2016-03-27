@@ -16,6 +16,7 @@ import dao.AuthenticationDAO;
 @Path("/auth")
 public class AuthenticationResource {
 
+	@PermitAll
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
