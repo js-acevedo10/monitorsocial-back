@@ -110,4 +110,100 @@ public class TwitterDAO {
 		}
 		return ResponseMonitor.buildResponse(json, status);
 	}
+	
+	public static Response getPositive(String userId) {
+		try {
+			Query<Tweet> q = MorphiaDB.getDatastore().createQuery(Tweet.class)
+					.field("unread").equal(true)
+					.field("userId").equal(userId)
+					.field("sentimiento").greaterThan(5);
+			List<Tweet> r = (List<Tweet>) q.asList();
+			if(r != null && !r.isEmpty()) {
+				new JSON();
+				Document resp = new Document()
+						.append("found", true)
+						.append("mensajes", JSON.parse(new Gson().toJson(r)))
+						.append("count", r.size());
+				json = resp.toJson();
+				status = Response.Status.OK;
+			} else {
+				Document resp = new Document()
+						.append("found", false);
+				json = resp.toJson();
+				status = Response.Status.BAD_REQUEST;
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+			Document resp = new Document()
+					.append("found", false)
+					.append("error", e.getMessage());
+			json = resp.toJson();
+			status = Response.Status.BAD_REQUEST;
+		}
+		return ResponseMonitor.buildResponse(json, status);
+	}
+	
+	public static Response getNegative(String userId) {
+		try {
+			Query<Tweet> q = MorphiaDB.getDatastore().createQuery(Tweet.class)
+					.field("unread").equal(true)
+					.field("userId").equal(userId)
+					.field("sentimiento").lessThan(5);
+			List<Tweet> r = (List<Tweet>) q.asList();
+			if(r != null && !r.isEmpty()) {
+				new JSON();
+				Document resp = new Document()
+						.append("found", true)
+						.append("mensajes", JSON.parse(new Gson().toJson(r)))
+						.append("count", r.size());
+				json = resp.toJson();
+				status = Response.Status.OK;
+			} else {
+				Document resp = new Document()
+						.append("found", false);
+				json = resp.toJson();
+				status = Response.Status.BAD_REQUEST;
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+			Document resp = new Document()
+					.append("found", false)
+					.append("error", e.getMessage());
+			json = resp.toJson();
+			status = Response.Status.BAD_REQUEST;
+		}
+		return ResponseMonitor.buildResponse(json, status);
+	}
+	
+	public static Response getNeutral(String userId) {
+		try {
+			Query<Tweet> q = MorphiaDB.getDatastore().createQuery(Tweet.class)
+					.field("unread").equal(true)
+					.field("userId").equal(userId)
+					.field("sentimiento").equal(5);
+			List<Tweet> r = (List<Tweet>) q.asList();
+			if(r != null && !r.isEmpty()) {
+				new JSON();
+				Document resp = new Document()
+						.append("found", true)
+						.append("mensajes", JSON.parse(new Gson().toJson(r)))
+						.append("count", r.size());
+				json = resp.toJson();
+				status = Response.Status.OK;
+			} else {
+				Document resp = new Document()
+						.append("found", false);
+				json = resp.toJson();
+				status = Response.Status.BAD_REQUEST;
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+			Document resp = new Document()
+					.append("found", false)
+					.append("error", e.getMessage());
+			json = resp.toJson();
+			status = Response.Status.BAD_REQUEST;
+		}
+		return ResponseMonitor.buildResponse(json, status);
+	}
 }

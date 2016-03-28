@@ -39,4 +39,28 @@ public class TwitterResource {
 	public static Response getUnread(@PathParam("userId") String userId) {
 		return TwitterDAO.getUnread(userId);
 	}
+	
+	@RolesAllowed(Roles.EMPRESA)
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{userId}/positiveMessages")
+	public static Response getPositive(@PathParam("userId") String userId) {
+		return TwitterDAO.getPositive(userId);
+	}
+	
+	@RolesAllowed(Roles.EMPRESA)
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{userId}/negativeMessages")
+	public static Response getNegavite(@PathParam("userId") String userId) {
+		return TwitterDAO.getNegative(userId);
+	}
+	
+	@RolesAllowed(Roles.EMPRESA)
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{userId}/neutralMessages")
+	public static Response getNeutral(@PathParam("userId") String userId) {
+		return TwitterDAO.getNeutral(userId);
+	}
 }

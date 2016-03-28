@@ -81,7 +81,7 @@ public class ResponseMonitor {
 			loadLists();
 		}
 		//Delimeters need to be further extended. 
-		StringTokenizer st = new StringTokenizer(msg,"[,. #]+"); 
+		StringTokenizer st = new StringTokenizer(msg,"[,. #]+-:=()"); 
 		double positive =0 ,negative =0; 
 		while(st.hasMoreTokens()) { 
 			String next = st.nextToken().toLowerCase();
@@ -139,8 +139,8 @@ public class ResponseMonitor {
 		}
 	}
 	
-	public static void main(String[] args) {
-		loadLists();
-		System.out.println(classifyText("Todo parece fuera de control"));
-	}
+//	public static void main(String[] args) {
+//		loadLists();
+//		System.out.println(classifyText("Todo parece fuera de control"));
+//	}
 }
