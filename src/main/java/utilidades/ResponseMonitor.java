@@ -94,7 +94,7 @@ public class ResponseMonitor {
 				System.out.println("NEG: " + next + " - " + negativeList.get(next));
 			}
 		} 
-		return positive-negative; 
+		return positive-negative==0?5:negative-positive; 
 	} 
 
 	/**
