@@ -39,7 +39,7 @@ public class TwitterDAO {
 				Document resp = new Document()
 						.append("listening", false);
 				json = resp.toJson();
-				status = Response.Status.BAD_REQUEST;
+				status = Response.Status.NOT_FOUND;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -47,7 +47,7 @@ public class TwitterDAO {
 					.append("listening", false)
 					.append("error", e.getMessage());
 			json = resp.toJson();
-			status = Response.Status.BAD_REQUEST;
+			status = Response.Status.INTERNAL_SERVER_ERROR;
 		}
 		return ResponseMonitor.buildResponse(json, status);
 	}
@@ -67,7 +67,7 @@ public class TwitterDAO {
 				Document resp = new Document()
 						.append("stopped", false);
 				json = resp.toJson();
-				status = Response.Status.BAD_REQUEST;
+				status = Response.Status.NOT_FOUND;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -75,7 +75,7 @@ public class TwitterDAO {
 					.append("stopped", false)
 					.append("error", e.getMessage());
 			json = resp.toJson();
-			status = Response.Status.BAD_REQUEST;
+			status = Response.Status.INTERNAL_SERVER_ERROR;
 		}
 		return ResponseMonitor.buildResponse(json, status);
 	}
@@ -98,7 +98,7 @@ public class TwitterDAO {
 				Document resp = new Document()
 						.append("found", false);
 				json = resp.toJson();
-				status = Response.Status.BAD_REQUEST;
+				status = Response.Status.NOT_FOUND;
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -106,7 +106,7 @@ public class TwitterDAO {
 					.append("found", false)
 					.append("error", e.getMessage());
 			json = resp.toJson();
-			status = Response.Status.BAD_REQUEST;
+			status = Response.Status.INTERNAL_SERVER_ERROR;
 		}
 		return ResponseMonitor.buildResponse(json, status);
 	}

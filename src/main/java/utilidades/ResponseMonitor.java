@@ -98,12 +98,12 @@ public class ResponseMonitor {
 		}
 		StringTokenizer st = new StringTokenizer(tweet.getMensaje(), "[,. #]+-:=()");
 		double positive = 0, negative = 0;
-		int cat = Constants.OTROS;
+		int cat = 0;
 		while(st.hasMoreTokens()) {
 			String next = st.nextToken().toLowerCase();
 			positive += Double.parseDouble(positiveList.get(next) != null?positiveList.get(next):"0");
 			negative += Double.parseDouble(negativeList.get(next) != null?negativeList.get(next):"0");
-			if(soporteList.contains(next)) {
+			if(soporteList.get(0).equals(next)) {
 				cat = Constants.SOPORTE;
 			} else if(quejaList.contains(next)) {
 				cat = Constants.QUEJA;
@@ -147,10 +147,13 @@ public class ResponseMonitor {
 	
 	public static void insertFromCSVToList(String filename, List<String> list) {
 		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "ISO-8859-3"));
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF-8"));
 			String line = null;
 			while((line = br.readLine()) != null) {
-				list.add(line);
+				String st[] = line.split(",");
+				for (String string : st) {
+					list.add(string);
+				}
 			}
 			br.close();
 		} catch(Exception e) {
@@ -172,8 +175,7 @@ public class ResponseMonitor {
 		}
 	}
 	
-//	public static void main(String[] args) {
-//		loadLists();
-//		System.out.println(classifyText("Todo parece fuera de control"));
-//	}
+	public static void main(String[] args) {
+		loadLists();
+	}
 }
