@@ -42,7 +42,6 @@ public class TwitterStreamer {
 		@Override
 		public void onStatus(Status s) {
 			MorphiaDB.getDatastore().save(new Tweet(s.getText(), s.getUser().getScreenName(), userId));
-			System.out.println(s);
 		}
 		
 		@Override

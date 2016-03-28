@@ -86,7 +86,7 @@ public class TwitterDAO {
 			if(r != null && !r.isEmpty()) {
 				Document resp = new Document()
 						.append("found", true)
-						.append("mensajes", new Gson().toJson(r))
+						.append("mensajes", Document.parse(new Gson().toJson(r)))
 						.append("count", r.size());
 				json = resp.toJson();
 				status = Response.Status.OK;
