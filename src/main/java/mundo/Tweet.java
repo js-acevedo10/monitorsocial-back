@@ -9,7 +9,7 @@ public class Tweet {
 	@Id ObjectId id;
 	private String sender, mensaje, userId;
 	private boolean unread;
-	private int sentimiento;
+	private double sentimiento;
 	public Tweet(String mensaje, String sender, String userId) {
 		this.mensaje = mensaje;
 		this.sender = sender;
@@ -35,7 +35,7 @@ public class Tweet {
 	public boolean isUnread() {
 		return unread;
 	}
-	public int getSentimiento() {
+	public double getSentimiento() {
 		return sentimiento;
 	}
 	public void setSender(String sender) {
@@ -50,7 +50,7 @@ public class Tweet {
 	public void setUnread(boolean unread) {
 		this.unread = unread;
 	}
-	public void setSentimiento(int sentimiento) {
+	public void setSentimiento(double sentimiento) {
 		this.sentimiento = sentimiento;
 	}
 }

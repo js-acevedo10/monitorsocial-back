@@ -1,15 +1,11 @@
 package utilidades;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.ws.rs.core.Response;
@@ -25,7 +21,7 @@ import com.google.gson.Gson;
  */
 public class ResponseMonitor {
 
-	public static Set<String> positiveList, negativeList;
+	public static HashMap<String, String> positiveList, negativeList;
 
 	/**
 	 * El asterisco significa que el reques puede venir de cualquier url, se reemplaza por una url en específico
@@ -74,23 +70,29 @@ public class ResponseMonitor {
 	//------------------------------------------------------------------------------------------------
 
 	public static void loadLists() {
-		negativeList = new HashSet<String>();
-		positiveList = new HashSet<String>();
-		insertFromFile("src/nspa.txt", negativeList);
-		insertFromFile("src/pspa.txt", positiveList);
+		negativeList = new HashMap<String, String>();
+		positiveList = new HashMap<String, String>();
+		insertFromFile("src/negSent.csv", negativeList);
+		insertFromFile("src/posSent.csv", positiveList);
 	}
 
-	public static int classifyText(String msg) {
+	public static double classifyText(String msg) {
 		if(positiveList == null || positiveList.isEmpty() || negativeList == null || negativeList.isEmpty()) {
 			loadLists();
 		}
 		//Delimeters need to be further extended. 
 		StringTokenizer st = new StringTokenizer(msg,"[,. #]+"); 
-		int positive =0 ,negative =0; 
+		double positive =0 ,negative =0; 
 		while(st.hasMoreTokens()) { 
 			String next = st.nextToken().toLowerCase();
-			positive += (positiveList.contains(next) ? 1: 0); 
-			negative += (negativeList.contains(next) ? 1: 0); 
+			positive += Double.parseDouble(positiveList.get(next) != null?positiveList.get(next):"0");
+			if(positiveList.get(next) != null) {
+				System.out.println("POS: " + next + " - " + positiveList.get(next));
+			}
+			negative += Double.parseDouble(negativeList.get(next) != null?negativeList.get(next):"0");
+			if(negativeList.get(next) != null) {
+				System.out.println("NEG: " + next + " - " + negativeList.get(next));
+			}
 		} 
 		return positive-negative; 
 	} 
@@ -123,62 +125,22 @@ public class ResponseMonitor {
 		return true;
 	}
 	
-	public static void insertFromFile(String filename, Set<String> list) { 
-		try  
-		{
-			InputReader in = new InputReader(filename); 
-			while(in.hasMoreTokens()) {
-				list.add(in.nextToken()); 
-			} 
-		}
-		catch(Exception e) {
+	public static void insertFromFile(String filename, HashMap<String, String> list) { 
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "ISO-8859-3"));
+			String line = null;
+			while((line = br.readLine()) != null) {
+				String str[] = line.split(",");
+				list.put(str[0], str[1]);
+			}
+			br.close();
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
-}
-
-//IO 
-class InputReader { 
-	BufferedReader reader; 
-	StringTokenizer tokenizer; 
-
-	InputReader() { 
-		reader = new BufferedReader(new InputStreamReader(System.in)); 
+	
+	public static void main(String[] args) {
+		loadLists();
+		System.out.println(classifyText("Todo parece fuera de control"));
 	}
-
-	InputReader(String fileName) throws FileNotFoundException { 
-		reader = new BufferedReader(new FileReader(new File(fileName))); 
-	}
-
-	String readLine() throws IOException { 
-		return reader.readLine(); 
-	}
-
-	String nextToken() throws IOException { 
-		while (tokenizer == null || !tokenizer.hasMoreTokens()) 
-			tokenizer = new StringTokenizer(readLine(),"[-]"); 
-		return tokenizer.nextToken(); 
-	}
-
-	boolean hasMoreTokens() throws IOException { 
-		while (tokenizer == null || !tokenizer.hasMoreTokens()) { 
-			String s = readLine(); 
-			if (s == null) 
-				return false; 
-			tokenizer = new StringTokenizer(s); 
-		} 
-		return true; 
-	}
-
-	int nextInt() throws NumberFormatException, IOException { 
-		return Integer.parseInt(nextToken()); 
-	} 
-
-	long nextLong() throws NumberFormatException, IOException { 
-		return Long.parseLong(nextToken()); 
-	} 
-
-	double nextDouble() throws NumberFormatException, IOException { 
-		return Double.parseDouble(nextToken()); 
-	} 
 }
