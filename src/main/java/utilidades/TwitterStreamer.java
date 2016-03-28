@@ -41,7 +41,12 @@ public class TwitterStreamer {
 		
 		@Override
 		public void onStatus(Status s) {
-			MorphiaDB.getDatastore().save(new Tweet(s.getText(), s.getUser().getScreenName(), userId));
+			if(!s.getText().contains("RT") && !s.getText().contains("https://t.co")) {
+				Tweet un = new Tweet(s.getText(), s.getUser().getScreenName(), userId);
+				un.setSentimiento(ResponseMonitor.classifyText(s.getText()));
+				System.out.println(un.getMensaje() + " - SENT: " + un.getSentimiento());
+				MorphiaDB.getDatastore().save(un);
+			}
 		}
 		
 		@Override

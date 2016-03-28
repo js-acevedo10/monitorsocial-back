@@ -9,6 +9,7 @@ import org.bson.types.ObjectId;
 import org.mongodb.morphia.query.Query;
 
 import com.google.gson.Gson;
+import com.mongodb.util.JSON;
 
 import mundo.Empresa;
 import mundo.Tweet;
@@ -41,6 +42,7 @@ public class TwitterDAO {
 				status = Response.Status.BAD_REQUEST;
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			Document resp = new Document()
 					.append("listening", false)
 					.append("error", e.getMessage());
@@ -68,6 +70,7 @@ public class TwitterDAO {
 				status = Response.Status.BAD_REQUEST;
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			Document resp = new Document()
 					.append("stopped", false)
 					.append("error", e.getMessage());
@@ -84,9 +87,10 @@ public class TwitterDAO {
 					.field("userId").equal(userId);
 			List<Tweet> r = (List<Tweet>) q.asList();
 			if(r != null && !r.isEmpty()) {
+				new JSON();
 				Document resp = new Document()
 						.append("found", true)
-						.append("mensajes", Document.parse(new Gson().toJson(r)))
+						.append("mensajes", JSON.parse(new Gson().toJson(r)))
 						.append("count", r.size());
 				json = resp.toJson();
 				status = Response.Status.OK;
@@ -97,6 +101,7 @@ public class TwitterDAO {
 				status = Response.Status.BAD_REQUEST;
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			Document resp = new Document()
 					.append("found", false)
 					.append("error", e.getMessage());
