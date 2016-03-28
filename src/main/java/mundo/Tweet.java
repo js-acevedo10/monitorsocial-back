@@ -10,6 +10,7 @@ public class Tweet {
 	private String sender, mensaje, userId;
 	private boolean unread;
 	private double sentimiento;
+	private int categoria;
 	public Tweet(String mensaje, String sender, String userId) {
 		this.mensaje = mensaje;
 		this.sender = sender;
@@ -38,6 +39,9 @@ public class Tweet {
 	public double getSentimiento() {
 		return sentimiento;
 	}
+	public int getCategoria() {
+		return categoria;
+	}
 	public void setSender(String sender) {
 		this.sender = sender;
 	}
@@ -52,5 +56,8 @@ public class Tweet {
 	}
 	public void setSentimiento(double sentimiento) {
 		this.sentimiento = sentimiento;
+	}
+	public void setCategoria(int categoria) {
+		this.categoria = categoria;
 	}
 }

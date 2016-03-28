@@ -43,8 +43,7 @@ public class TwitterStreamer {
 		public void onStatus(Status s) {
 			if(!s.getText().contains("RT") && !s.getText().contains("https://t.co")) {
 				Tweet un = new Tweet(s.getText(), s.getUser().getScreenName(), userId);
-				un.setSentimiento(ResponseMonitor.classifyText(s.getText()));
-				System.out.println(un.getMensaje() + " - SENT: " + un.getSentimiento());
+				ResponseMonitor.classifyTweet(un);
 				MorphiaDB.getDatastore().save(un);
 			}
 		}

@@ -14,6 +14,8 @@ import org.bson.Document;
 
 import com.google.gson.Gson;
 
+import mundo.Tweet;
+
 /**
  * Esta clase sirve para enviar respuestas REST sin tener que armarlas siempre, dependiendo de las necesidades <br>
  * vamos a tener o no que separar los métodos y los headers.
@@ -22,6 +24,7 @@ import com.google.gson.Gson;
 public class ResponseMonitor {
 
 	public static HashMap<String, String> positiveList, negativeList;
+	public static List<String> soporteList, quejaList, peticionList, reclamoList; 
 
 	/**
 	 * El asterisco significa que el reques puede venir de cualquier url, se reemplaza por una url en específico
@@ -72,30 +75,47 @@ public class ResponseMonitor {
 	public static void loadLists() {
 		negativeList = new HashMap<String, String>();
 		positiveList = new HashMap<String, String>();
-		insertFromFile("src/negSent.csv", negativeList);
-		insertFromFile("src/posSent.csv", positiveList);
+		insertFromCSVToHashMap("src/negSent.csv", negativeList);
+		insertFromCSVToHashMap("src/posSent.csv", positiveList);
+		soporteList = new ArrayList<String>();
+		quejaList = new ArrayList<String>();
+		peticionList = new ArrayList<String>();
+		reclamoList = new ArrayList<String>();
+		insertFromCSVToList("src/soporteList.csv", soporteList);
+		insertFromCSVToList("src/quejaList.csv", quejaList);
+		insertFromCSVToList("src/peticionList.csv", peticionList);
+		insertFromCSVToList("src/reclamoList.csv", reclamoList);
 	}
-
-	public static double classifyText(String msg) {
-		if(positiveList == null || positiveList.isEmpty() || negativeList == null || negativeList.isEmpty()) {
+	
+	public static void classifyTweet(Tweet tweet) {
+		if(positiveList == null || positiveList.isEmpty() 
+				|| negativeList == null || negativeList.isEmpty()
+				|| soporteList == null || soporteList.isEmpty()
+				|| quejaList == null || quejaList.isEmpty()
+				|| peticionList == null || peticionList.isEmpty()
+				|| reclamoList == null || reclamoList.isEmpty()) {
 			loadLists();
 		}
-		//Delimeters need to be further extended. 
-		StringTokenizer st = new StringTokenizer(msg,"[,. #]+-:=()"); 
-		double positive =0 ,negative =0; 
-		while(st.hasMoreTokens()) { 
+		StringTokenizer st = new StringTokenizer(tweet.getMensaje(), "[,. #]+-:=()");
+		double positive = 0, negative = 0;
+		int cat = Constants.OTROS;
+		while(st.hasMoreTokens()) {
 			String next = st.nextToken().toLowerCase();
 			positive += Double.parseDouble(positiveList.get(next) != null?positiveList.get(next):"0");
-			if(positiveList.get(next) != null) {
-				System.out.println("POS: " + next + " - " + positiveList.get(next));
-			}
 			negative += Double.parseDouble(negativeList.get(next) != null?negativeList.get(next):"0");
-			if(negativeList.get(next) != null) {
-				System.out.println("NEG: " + next + " - " + negativeList.get(next));
+			if(soporteList.contains(next)) {
+				cat = Constants.SOPORTE;
+			} else if(quejaList.contains(next)) {
+				cat = Constants.QUEJA;
+			} else if(peticionList.contains(next)) {
+				cat = Constants.PETICION;
+			} else if(reclamoList.contains(next)) {
+				cat = Constants.RECLAMO;
 			}
-		} 
-		return positive-negative==0?5:positive-negative; 
-	} 
+		}
+		tweet.setSentimiento(positive-negative==0?5:positive-negative);
+		tweet.setCategoria(cat);
+	}
 
 	/**
 	 * Método que revisa la nulidad de un objeto
@@ -125,7 +145,20 @@ public class ResponseMonitor {
 		return true;
 	}
 	
-	public static void insertFromFile(String filename, HashMap<String, String> list) { 
+	public static void insertFromCSVToList(String filename, List<String> list) {
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "ISO-8859-3"));
+			String line = null;
+			while((line = br.readLine()) != null) {
+				list.add(line);
+			}
+			br.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void insertFromCSVToHashMap(String filename, HashMap<String, String> list) { 
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "ISO-8859-3"));
 			String line = null;
