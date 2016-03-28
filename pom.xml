@@ -85,7 +85,7 @@
     </dependencies>
 
     <build>
-        <finalName>SATT</finalName>
+        <finalName>Monitor Social</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -26,12 +26,13 @@ public class AuthenticationDAO {
 		List<Empresa> user = q.asList();
 		if(user != null && !user.isEmpty()) {
 			Empresa r = user.get(0);
-			String at = "Basic " + Base64.encodeAsString(r.getId()) + ":" + Base64.encodeAsString(r.getPassword());
+			String at = "Basic " + Base64.encodeAsString(r.getId() + ":" + r.getPassword());
 			Document resp = new Document()
 					.append("id", r.getId())
 					.append("name", r.getName())
 					.append("twitterId", r.getTwitterId())
-					.append("accessToken", at);
+					.append("accessToken", at)
+					.append("role", Roles.EMPRESA);
 			json = resp.toJson();
 			status = Response.Status.OK;
 		} else {
@@ -55,6 +56,9 @@ public class AuthenticationDAO {
 	
 	public static void main(String[] args) {
 		Empresa emp = new Empresa("Nike", "nikemonitor", "123", "juan@me.com", "Bogota", "Cundinamarca", "Colombia", "@Nike");
+		emp.addKeyWord("@Nike");
+		emp.addKeyWord("#Nike");
+		emp.addKeyWord("Nike");
 		try {
 			MorphiaDB.getDatastore().save(emp);
 		} catch(Exception e) {

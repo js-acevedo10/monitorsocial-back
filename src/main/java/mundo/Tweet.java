@@ -8,9 +8,15 @@ import org.mongodb.morphia.annotations.Id;
 @Entity("tweets")
 public class Tweet {
 	@Id ObjectId id;
-	private String sender, mensaje;
-	public Tweet(String mensaje, String sender) {
+	private String sender, mensaje, userId;
+	private boolean unread;
+	public Tweet(String mensaje, String sender, String userId) {
 		this.mensaje = mensaje;
 		this.sender = sender;
+		this.userId = userId;
+		this.unread = true;
+	}
+	public Tweet() {
+		//MANDATORY
 	}
 }
