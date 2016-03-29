@@ -6,22 +6,26 @@ import javax.ws.rs.core.Response;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
 
 import com.google.gson.Gson;
 import com.mongodb.util.JSON;
 
 import mundo.Empresa;
-import mundo.Tweet;
+import mundo.TwitterCaso;
+import mundo.TwitterStatus;
+import mundo.TwitterUser;
+import twitter4j.Status;
 import utilidades.MorphiaDB;
 import utilidades.ResponseMonitor;
 import utilidades.TwitterStreamer;
 
 public class TwitterDAO {
-	
+
 	private static String json = "";
 	private static Response.Status status = Response.Status.OK;
-	
+
 	public static Response startListening(String userId) {
 		try {
 			Query<Empresa> q = MorphiaDB.getDatastore().createQuery(Empresa.class)
@@ -51,7 +55,7 @@ public class TwitterDAO {
 		}
 		return ResponseMonitor.buildResponse(json, status);
 	}
-	
+
 	public static Response stopListening(String userId) {
 		try {
 			Query<Empresa> q = MorphiaDB.getDatastore().createQuery(Empresa.class)
@@ -79,13 +83,13 @@ public class TwitterDAO {
 		}
 		return ResponseMonitor.buildResponse(json, status);
 	}
-	
+
 	public static Response getUnread(String userId) {
 		try {
-			Query<Tweet> q = MorphiaDB.getDatastore().createQuery(Tweet.class)
+			Query<TwitterStatus> q = MorphiaDB.getDatastore().createQuery(TwitterStatus.class)
 					.field("unread").equal(true)
 					.field("userId").equal(userId);
-			List<Tweet> r = (List<Tweet>) q.asList();
+			List<TwitterStatus> r = (List<TwitterStatus>) q.asList();
 			if(r != null && !r.isEmpty()) {
 				new JSON();
 				Document resp = new Document()
@@ -110,14 +114,14 @@ public class TwitterDAO {
 		}
 		return ResponseMonitor.buildResponse(json, status);
 	}
-	
+
 	public static Response getPositive(String userId) {
 		try {
-			Query<Tweet> q = MorphiaDB.getDatastore().createQuery(Tweet.class)
+			Query<TwitterStatus> q = MorphiaDB.getDatastore().createQuery(TwitterStatus.class)
 					.field("unread").equal(true)
 					.field("userId").equal(userId)
 					.field("sentimiento").greaterThan(5);
-			List<Tweet> r = (List<Tweet>) q.asList();
+			List<TwitterStatus> r = (List<TwitterStatus>) q.asList();
 			if(r != null && !r.isEmpty()) {
 				new JSON();
 				Document resp = new Document()
@@ -142,14 +146,14 @@ public class TwitterDAO {
 		}
 		return ResponseMonitor.buildResponse(json, status);
 	}
-	
+
 	public static Response getNegative(String userId) {
 		try {
-			Query<Tweet> q = MorphiaDB.getDatastore().createQuery(Tweet.class)
+			Query<TwitterStatus> q = MorphiaDB.getDatastore().createQuery(TwitterStatus.class)
 					.field("unread").equal(true)
 					.field("userId").equal(userId)
 					.field("sentimiento").lessThan(5);
-			List<Tweet> r = (List<Tweet>) q.asList();
+			List<TwitterStatus> r = (List<TwitterStatus>) q.asList();
 			if(r != null && !r.isEmpty()) {
 				new JSON();
 				Document resp = new Document()
@@ -174,14 +178,14 @@ public class TwitterDAO {
 		}
 		return ResponseMonitor.buildResponse(json, status);
 	}
-	
+
 	public static Response getNeutral(String userId) {
 		try {
-			Query<Tweet> q = MorphiaDB.getDatastore().createQuery(Tweet.class)
+			Query<TwitterStatus> q = MorphiaDB.getDatastore().createQuery(TwitterStatus.class)
 					.field("unread").equal(true)
 					.field("userId").equal(userId)
 					.field("sentimiento").equal(5);
-			List<Tweet> r = (List<Tweet>) q.asList();
+			List<TwitterStatus> r = (List<TwitterStatus>) q.asList();
 			if(r != null && !r.isEmpty()) {
 				new JSON();
 				Document resp = new Document()
@@ -205,5 +209,36 @@ public class TwitterDAO {
 			status = Response.Status.BAD_REQUEST;
 		}
 		return ResponseMonitor.buildResponse(json, status);
+	}
+
+	public static void handleNewStatus(Status s) {
+		try {
+			Datastore db = MorphiaDB.getDatastore();
+			TwitterUser user = null;
+			Query<TwitterUser> q = db.createQuery(TwitterUser.class)
+					.field("name").equal(s.getUser().getName())
+					.field("screenName").equal(s.getUser().getScreenName());
+			List<TwitterUser> listUser = (List<TwitterUser>) q.asList();
+			if(listUser != null && !listUser.isEmpty()) {
+				user = listUser.get(0);
+			} else {
+				user = new TwitterUser(s.getUser());					
+				db.save(user);
+			}
+
+			TwitterStatus status = new TwitterStatus(s, user);
+			ResponseMonitor.classifyTweet(status);
+			db.save(status);
+			user.addStatus(status);
+
+			if(status.getCategoria() != utilidades.Constants.OTROS) {
+				TwitterCaso caso = new TwitterCaso(status, user);
+				db.save(caso);
+				user.addCaso(caso);
+			}
+			db.save(user);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

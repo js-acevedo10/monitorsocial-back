@@ -16,7 +16,7 @@ import com.twitter.hbc.httpclient.auth.Authentication;
 import com.twitter.hbc.httpclient.auth.OAuth1;
 import com.twitter.hbc.twitter4j.Twitter4jStatusClient;
 
-import mundo.Tweet;
+import dao.TwitterDAO;
 import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
@@ -25,7 +25,6 @@ import twitter4j.StatusListener;
 public class TwitterStreamer {
 	
 	private static Twitter4jStatusClient twitter4jStatusClient;
-	private static String userId;
 	
 	private static StatusListener statusListener = new StatusListener() {
 		
@@ -41,11 +40,7 @@ public class TwitterStreamer {
 		
 		@Override
 		public void onStatus(Status s) {
-			if(!s.getText().contains("RT") && !s.getText().contains("https://t.co")) {
-				Tweet un = new Tweet(s.getText(), s.getUser().getScreenName(), userId);
-				ResponseMonitor.classifyTweet(un);
-				MorphiaDB.getDatastore().save(un);
-			}
+			TwitterDAO.handleNewStatus(s);
 		}
 		
 		@Override
@@ -65,7 +60,6 @@ public class TwitterStreamer {
 	};
 	
 	public static void startListening(String consumerKey, String consumerSecret, String token, String tokenSecret, List<String> trackTerms, String userId) throws InterruptedException {
-		TwitterStreamer.userId = userId;
 		BlockingQueue<String> queue = new LinkedBlockingQueue<String>(1000);
 		StatusesFilterEndpoint hosebirdEndpoint = new StatusesFilterEndpoint();
 		hosebirdEndpoint.trackTerms(trackTerms);

@@ -14,7 +14,7 @@ import org.bson.Document;
 
 import com.google.gson.Gson;
 
-import mundo.Tweet;
+import mundo.TwitterStatus;
 
 /**
  * Esta clase sirve para enviar respuestas REST sin tener que armarlas siempre, dependiendo de las necesidades <br>
@@ -87,7 +87,7 @@ public class ResponseMonitor {
 		insertFromCSVToList("src/reclamoList.csv", reclamoList);
 	}
 	
-	public static void classifyTweet(Tweet tweet) {
+	public static void classifyTweet(TwitterStatus tweet) {
 		if(positiveList == null || positiveList.isEmpty() 
 				|| negativeList == null || negativeList.isEmpty()
 				|| soporteList == null || soporteList.isEmpty()
@@ -96,7 +96,7 @@ public class ResponseMonitor {
 				|| reclamoList == null || reclamoList.isEmpty()) {
 			loadLists();
 		}
-		StringTokenizer st = new StringTokenizer(tweet.getMensaje(), "[,. #]+-:=()");
+		StringTokenizer st = new StringTokenizer(tweet.getText(), "[,. #]+-:=()");
 		double positive = 0, negative = 0;
 		int cat = 0;
 		while(st.hasMoreTokens()) {
