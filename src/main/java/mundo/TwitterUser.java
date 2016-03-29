@@ -1,5 +1,6 @@
 package mundo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -38,6 +39,8 @@ public class TwitterUser {
 		verified = user.isVerified();
 		followersCount = user.getFollowersCount();
 		friendsCount = user.getFriendsCount();
+		statuses = new ArrayList<TwitterStatus>();
+		casos = new ArrayList<TwitterCaso>();
 	}
 
 	public long getTwitterId() {

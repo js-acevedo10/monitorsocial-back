@@ -9,7 +9,7 @@ import org.mongodb.morphia.annotations.Reference;
 
 import utilidades.Constants;
 
-@Entity("Caso")
+@Entity("TwitterCasos")
 public class TwitterCaso {
 	@Id ObjectId id;
 	@Reference private TwitterUser user;

@@ -88,7 +88,7 @@ public class TwitterDAO {
 		try {
 			Query<TwitterStatus> q = MorphiaDB.getDatastore().createQuery(TwitterStatus.class)
 					.field("unread").equal(true)
-					.field("userId").equal(userId);
+					.field("empresaId").equal(userId);
 			List<TwitterStatus> r = (List<TwitterStatus>) q.asList();
 			if(r != null && !r.isEmpty()) {
 				new JSON();
@@ -119,7 +119,7 @@ public class TwitterDAO {
 		try {
 			Query<TwitterStatus> q = MorphiaDB.getDatastore().createQuery(TwitterStatus.class)
 					.field("unread").equal(true)
-					.field("userId").equal(userId)
+					.field("empresaId").equal(userId)
 					.field("sentimiento").greaterThan(5);
 			List<TwitterStatus> r = (List<TwitterStatus>) q.asList();
 			if(r != null && !r.isEmpty()) {
@@ -134,7 +134,7 @@ public class TwitterDAO {
 				Document resp = new Document()
 						.append("found", false);
 				json = resp.toJson();
-				status = Response.Status.BAD_REQUEST;
+				status = Response.Status.NOT_FOUND;
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -142,7 +142,7 @@ public class TwitterDAO {
 					.append("found", false)
 					.append("error", e.getMessage());
 			json = resp.toJson();
-			status = Response.Status.BAD_REQUEST;
+			status = Response.Status.INTERNAL_SERVER_ERROR;
 		}
 		return ResponseMonitor.buildResponse(json, status);
 	}
@@ -151,7 +151,7 @@ public class TwitterDAO {
 		try {
 			Query<TwitterStatus> q = MorphiaDB.getDatastore().createQuery(TwitterStatus.class)
 					.field("unread").equal(true)
-					.field("userId").equal(userId)
+					.field("empresaId").equal(userId)
 					.field("sentimiento").lessThan(5);
 			List<TwitterStatus> r = (List<TwitterStatus>) q.asList();
 			if(r != null && !r.isEmpty()) {
@@ -166,7 +166,7 @@ public class TwitterDAO {
 				Document resp = new Document()
 						.append("found", false);
 				json = resp.toJson();
-				status = Response.Status.BAD_REQUEST;
+				status = Response.Status.NOT_FOUND;
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -174,7 +174,7 @@ public class TwitterDAO {
 					.append("found", false)
 					.append("error", e.getMessage());
 			json = resp.toJson();
-			status = Response.Status.BAD_REQUEST;
+			status = Response.Status.INTERNAL_SERVER_ERROR;
 		}
 		return ResponseMonitor.buildResponse(json, status);
 	}
@@ -183,7 +183,7 @@ public class TwitterDAO {
 		try {
 			Query<TwitterStatus> q = MorphiaDB.getDatastore().createQuery(TwitterStatus.class)
 					.field("unread").equal(true)
-					.field("userId").equal(userId)
+					.field("empresaId").equal(userId)
 					.field("sentimiento").equal(5);
 			List<TwitterStatus> r = (List<TwitterStatus>) q.asList();
 			if(r != null && !r.isEmpty()) {
@@ -198,7 +198,7 @@ public class TwitterDAO {
 				Document resp = new Document()
 						.append("found", false);
 				json = resp.toJson();
-				status = Response.Status.BAD_REQUEST;
+				status = Response.Status.NOT_FOUND;
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -206,37 +206,40 @@ public class TwitterDAO {
 					.append("found", false)
 					.append("error", e.getMessage());
 			json = resp.toJson();
-			status = Response.Status.BAD_REQUEST;
+			status = Response.Status.INTERNAL_SERVER_ERROR;
 		}
 		return ResponseMonitor.buildResponse(json, status);
 	}
 
-	public static void handleNewStatus(Status s) {
+	public static void handleNewStatus(Status s, String empresaId) {
 		try {
+			System.out.println(s.getText());
 			Datastore db = MorphiaDB.getDatastore();
-			TwitterUser user = null;
-			Query<TwitterUser> q = db.createQuery(TwitterUser.class)
-					.field("name").equal(s.getUser().getName())
-					.field("screenName").equal(s.getUser().getScreenName());
-			List<TwitterUser> listUser = (List<TwitterUser>) q.asList();
-			if(listUser != null && !listUser.isEmpty()) {
-				user = listUser.get(0);
-			} else {
-				user = new TwitterUser(s.getUser());					
-				db.save(user);
-			}
 
-			TwitterStatus status = new TwitterStatus(s, user);
+			TwitterStatus status = new TwitterStatus(s, empresaId);
 			ResponseMonitor.classifyTweet(status);
 			db.save(status);
-			user.addStatus(status);
 
 			if(status.getCategoria() != utilidades.Constants.OTROS) {
+				TwitterUser user = null;
+				Query<TwitterUser> q = db.createQuery(TwitterUser.class)
+						.field("name").equal(s.getUser().getName())
+						.field("screenName").equal(s.getUser().getScreenName());
+				List<TwitterUser> listUser = (List<TwitterUser>) q.asList();
+				if(listUser != null && !listUser.isEmpty()) {
+					user = listUser.get(0);
+				} else {
+					user = new TwitterUser(s.getUser());					
+					db.save(user);
+				}
+				status.setUser(user);
+				db.save(status);
+				user.addStatus(status);
 				TwitterCaso caso = new TwitterCaso(status, user);
 				db.save(caso);
 				user.addCaso(caso);
+				db.save(user);
 			}
-			db.save(user);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

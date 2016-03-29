@@ -25,6 +25,7 @@ import twitter4j.StatusListener;
 public class TwitterStreamer {
 	
 	private static Twitter4jStatusClient twitter4jStatusClient;
+	private static String empresaId;
 	
 	private static StatusListener statusListener = new StatusListener() {
 		
@@ -40,7 +41,7 @@ public class TwitterStreamer {
 		
 		@Override
 		public void onStatus(Status s) {
-			TwitterDAO.handleNewStatus(s);
+			TwitterDAO.handleNewStatus(s, empresaId);
 		}
 		
 		@Override
@@ -59,7 +60,8 @@ public class TwitterStreamer {
 		}
 	};
 	
-	public static void startListening(String consumerKey, String consumerSecret, String token, String tokenSecret, List<String> trackTerms, String userId) throws InterruptedException {
+	public static void startListening(String consumerKey, String consumerSecret, String token, String tokenSecret, List<String> trackTerms, String empresaId) throws InterruptedException {
+		TwitterStreamer.empresaId = empresaId;
 		BlockingQueue<String> queue = new LinkedBlockingQueue<String>(1000);
 		StatusesFilterEndpoint hosebirdEndpoint = new StatusesFilterEndpoint();
 		hosebirdEndpoint.trackTerms(trackTerms);

@@ -8,14 +8,15 @@ import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Reference;
 
 import twitter4j.Status;
+import utilidades.Constants;
 
-@Entity("tweets")
+@Entity("TwitterStatuses")
 public class TwitterStatus {
 	@Id ObjectId id;
 	private long statusId, inReplyToStatusId, inReplyToUserId;
 	private Date createdAt;
-	private String text, source, placeCountryCode, placeCountry, placeType, placeFullName, placeStreetAddress;
-	private boolean truncated, favorited, retweeted, retweet;
+	private String text, source, placeCountryCode, placeCountry, placeType, placeFullName, placeStreetAddress, empresaId;
+	private boolean truncated, favorited, retweeted, retweet, unread;
 	private int favoriteCount, retweetCount, categoria;
 	private double sentimiento;
 	@Reference
@@ -25,7 +26,7 @@ public class TwitterStatus {
 		//MANDATORY
 	}
 	
-	public TwitterStatus(Status status, TwitterUser user) {
+	public TwitterStatus(Status status, String empresaId) {
 		statusId = status.getId();
 		inReplyToStatusId = status.getInReplyToStatusId();
 		inReplyToUserId = status.getInReplyToUserId();
@@ -45,7 +46,9 @@ public class TwitterStatus {
 		retweet = status.isRetweet();
 		favoriteCount = status.getFavoriteCount();
 		retweetCount = status.getRetweetCount();
-		this.user = user;
+		unread = true;
+		categoria = Constants.OTROS;
+		this.empresaId = empresaId;
 	}
 
 	public long getStatusId() {
@@ -207,4 +210,21 @@ public class TwitterStatus {
 	public void setSentimiento(double sentimiento) {
 		this.sentimiento = sentimiento;
 	}
+
+	public boolean isUnread() {
+		return unread;
+	}
+
+	public void setUnread(boolean unread) {
+		this.unread = unread;
+	}
+
+	public String getEmpresaId() {
+		return empresaId;
+	}
+
+	public void setEmpresaId(String empresaId) {
+		this.empresaId = empresaId;
+	}
+	
 }
