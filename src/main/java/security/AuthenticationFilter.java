@@ -72,7 +72,6 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
                   
                 //Verify user access
                 if(method.isAnnotationPresent(RolesAllowed.class)) {
-                	System.out.println("elo");
                     RolesAllowed rolesAnnotation = method.getAnnotation(RolesAllowed.class);
                     Set<String> rolesSet = new HashSet<String>(Arrays.asList(rolesAnnotation.value()));
                       
