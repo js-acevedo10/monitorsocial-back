@@ -21,6 +21,7 @@ public class TwitterResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{userId}/startListening")
 	public static Response startListening(@PathParam("userId") String userId) {
+		System.out.println("Hola");
 		return TwitterDAO.startListening(userId);
 	}
 	

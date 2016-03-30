@@ -9,7 +9,7 @@ import org.bson.types.ObjectId;
 import org.glassfish.jersey.internal.util.Base64;
 import org.mongodb.morphia.query.Query;
 
-import mundo.Empresa;
+import mundo.Usuario;
 import security.Roles;
 import utilidades.MorphiaDB;
 import utilidades.ResponseMonitor;
@@ -18,14 +18,14 @@ public class AuthenticationDAO {
 
 	private static String json = "";
 	private static Response.Status status = Response.Status.OK;
-	
+
 	public static Response login(String email, String password) {
-		Query<Empresa> q = MorphiaDB.getDatastore().createQuery(Empresa.class)
+		Query<Usuario> q = MorphiaDB.getDatastore().createQuery(Usuario.class)
 				.field("email").equal(email)
 				.field("password").equal(password);
-		List<Empresa> user = q.asList();
+		List<Usuario> user = q.asList();
 		if(user != null && !user.isEmpty()) {
-			Empresa r = user.get(0);
+			Usuario r = user.get(0);
 			String at = "Basic " + Base64.encodeAsString(r.getId() + ":" + r.getPassword());
 			Document resp = new Document()
 					.append("id", r.getId())
@@ -41,21 +41,25 @@ public class AuthenticationDAO {
 		}
 		return ResponseMonitor.buildResponse(json, status);
 	}
-	
+
 	public static String authByID(String id, String token) {
 		json = "{\"error\":\"not a valid user\"}";
-		Query<Empresa> q = MorphiaDB.getDatastore().createQuery(Empresa.class)
-				.field("id").equal(new ObjectId(id))
-				.field("password").equal(token);
-		List<Empresa> user = q.asList();
-		if(user != null && !user.isEmpty()) {
-			json = Roles.EMPRESA;
+		try {
+			Query<Usuario> q = MorphiaDB.getDatastore().createQuery(Usuario.class)
+					.field("id").equal(new ObjectId(id))
+					.field("password").equal(token);
+			List<Usuario> user = q.asList();
+			if(user != null && !user.isEmpty()) {
+				json = Roles.EMPRESA;
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 		return json;
 	}
-	
+
 	public static void main(String[] args) {
-		Empresa emp = new Empresa("Nike", "nikemonitor", "123", "juan@me.com", "Bogota", "Cundinamarca", "Colombia", "@Nike");
+		Usuario emp = new Usuario("Nike", "nikemonitor", "123", "juan@me.com", "Bogota", "Cundinamarca", "Colombia", "@Nike");
 		emp.addKeyWord("@Nike");
 		emp.addKeyWord("#Nike");
 		emp.addKeyWord("Nike");

@@ -19,7 +19,7 @@ public class TwitterUser {
 	private boolean defaultProfileImage, verified;
 	private int followersCount, friendsCount;
 	@Reference private List<TwitterStatus> statuses;
-	@Reference private List<TwitterCaso> casos;
+	@Reference private List<Caso> casos;
 	
 	public TwitterUser() {
 		//MANDATORY
@@ -40,7 +40,7 @@ public class TwitterUser {
 		followersCount = user.getFollowersCount();
 		friendsCount = user.getFriendsCount();
 		statuses = new ArrayList<TwitterStatus>();
-		casos = new ArrayList<TwitterCaso>();
+		casos = new ArrayList<Caso>();
 	}
 
 	public long getTwitterId() {
@@ -151,7 +151,7 @@ public class TwitterUser {
 		return statuses;
 	}
 
-	public List<TwitterCaso> getCasos() {
+	public List<Caso> getCasos() {
 		return casos;
 	}
 
@@ -163,11 +163,11 @@ public class TwitterUser {
 		this.statuses.add(status);
 	}
 
-	public void setCasos(List<TwitterCaso> casos) {
+	public void setCasos(List<Caso> casos) {
 		this.casos = casos;
 	}
 	
-	public void addCaso(TwitterCaso caso) {
+	public void addCaso(Caso caso) {
 		this.casos.add(caso);
 	}
 }

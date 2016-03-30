@@ -67,11 +67,12 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
                 final String token = tokenizer.nextToken();
                   
                 //Verifying Username and password
-                System.out.println(id);
-                System.out.println(token);
+//                System.out.println(id);
+//                System.out.println(token);
                   
                 //Verify user access
                 if(method.isAnnotationPresent(RolesAllowed.class)) {
+                	System.out.println("elo");
                     RolesAllowed rolesAnnotation = method.getAnnotation(RolesAllowed.class);
                     Set<String> rolesSet = new HashSet<String>(Arrays.asList(rolesAnnotation.value()));
                       

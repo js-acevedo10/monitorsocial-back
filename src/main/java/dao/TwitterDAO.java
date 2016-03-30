@@ -12,10 +12,10 @@ import org.mongodb.morphia.query.Query;
 import com.google.gson.Gson;
 import com.mongodb.util.JSON;
 
-import mundo.Empresa;
-import mundo.TwitterCaso;
+import mundo.Caso;
 import mundo.TwitterStatus;
 import mundo.TwitterUser;
+import mundo.Usuario;
 import twitter4j.Status;
 import utilidades.MorphiaDB;
 import utilidades.ResponseMonitor;
@@ -28,11 +28,11 @@ public class TwitterDAO {
 
 	public static Response startListening(String userId) {
 		try {
-			Query<Empresa> q = MorphiaDB.getDatastore().createQuery(Empresa.class)
+			Query<Usuario> q = MorphiaDB.getDatastore().createQuery(Usuario.class)
 					.field("id").equal(new ObjectId(userId));
-			List<Empresa> r = (List<Empresa>) q.asList();
+			List<Usuario> r = (List<Usuario>) q.asList();
 			if(r != null && !r.isEmpty()) {
-				Empresa e = r.get(0);
+				Usuario e = r.get(0);
 				TwitterStreamer.startListening("bGPtpsnIx0eQJuVtXtHncfZUA", "dAg6JZB84XXlKn21VGqxGSofaJtkIaD8c9pUrqCJJbyWSMZ2bD", "2334095631-QwupYxwRjThfNx7s4j24Vo28ylS64NFs7LA4Fqh", "4XVrQTuvs02XO6WTqhwJz8Pq2P9m4B00JI4X0lVZnafV9", e.getKeyWords(), e.getId());
 				Document resp = new Document()
 						.append("listening", true)
@@ -58,9 +58,9 @@ public class TwitterDAO {
 
 	public static Response stopListening(String userId) {
 		try {
-			Query<Empresa> q = MorphiaDB.getDatastore().createQuery(Empresa.class)
+			Query<Usuario> q = MorphiaDB.getDatastore().createQuery(Usuario.class)
 					.field("id").equal(new ObjectId(userId));
-			List<Empresa> r = (List<Empresa>) q.asList();
+			List<Usuario> r = (List<Usuario>) q.asList();
 			if(r != null && !r.isEmpty()) {
 				TwitterStreamer.stopListening();
 				Document resp = new Document()
@@ -219,8 +219,7 @@ public class TwitterDAO {
 			TwitterStatus status = new TwitterStatus(s, empresaId);
 			ResponseMonitor.classifyTweet(status);
 			db.save(status);
-
-			if(status.getCategoria() != utilidades.Constants.OTROS) {
+			if(status.getCategoria() != utilidades.Constantes.TWEET_TIPO_OTROS) {
 				TwitterUser user = null;
 				Query<TwitterUser> q = db.createQuery(TwitterUser.class)
 						.field("name").equal(s.getUser().getName())
@@ -232,16 +231,15 @@ public class TwitterDAO {
 					user = new TwitterUser(s.getUser());					
 					db.save(user);
 				}
-				status.setUser(user);
-				db.save(status);
 				user.addStatus(status);
-				TwitterCaso caso = new TwitterCaso(status, user);
-				db.save(caso);
+				Caso caso = CasoDAO.addTwitterCaso(status, empresaId);
 				user.addCaso(caso);
 				db.save(user);
 			}
 		} catch(Exception e) {
-			e.printStackTrace();
+			if(!e.getMessage().contains("E11000")) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

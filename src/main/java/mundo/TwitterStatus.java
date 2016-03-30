@@ -8,19 +8,17 @@ import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Reference;
 
 import twitter4j.Status;
-import utilidades.Constants;
+import utilidades.Constantes;
 
 @Entity("TwitterStatuses")
 public class TwitterStatus {
 	@Id ObjectId id;
-	private long statusId, inReplyToStatusId, inReplyToUserId;
+	private long statusId, inReplyToStatusId, inReplyToUserId, userId;
 	private Date createdAt;
-	private String text, source, placeCountryCode, placeCountry, placeType, placeFullName, placeStreetAddress, empresaId;
+	private String text, source, placeCountryCode, placeCountry, placeType, placeFullName, placeStreetAddress, empresaId, userName, userScreenName, userProfilePicUrl, userMinProfilePicUrl;
 	private boolean truncated, favorited, retweeted, retweet, unread;
 	private int favoriteCount, retweetCount, categoria;
 	private double sentimiento;
-	@Reference
-	private TwitterUser user;
 	
 	public TwitterStatus() {
 		//MANDATORY
@@ -47,7 +45,12 @@ public class TwitterStatus {
 		favoriteCount = status.getFavoriteCount();
 		retweetCount = status.getRetweetCount();
 		unread = true;
-		categoria = Constants.OTROS;
+		categoria = Constantes.TWEET_TIPO_OTROS;
+		userId = status.getUser().getId();
+		userName = status.getUser().getName();
+		userScreenName = status.getUser().getScreenName();
+		userProfilePicUrl = status.getUser().getProfileImageURL();
+		userMinProfilePicUrl = status.getUser().getMiniProfileImageURL();
 		this.empresaId = empresaId;
 	}
 
@@ -119,10 +122,6 @@ public class TwitterStatus {
 		return retweetCount;
 	}
 
-	public TwitterUser getUser() {
-		return user;
-	}
-
 	public void setStatusId(long statusId) {
 		this.statusId = statusId;
 	}
@@ -190,10 +189,6 @@ public class TwitterStatus {
 	public void setRetweetCount(int retweetCount) {
 		this.retweetCount = retweetCount;
 	}
-
-	public void setUser(TwitterUser user) {
-		this.user = user;
-	}
 	
 	public int getCategoria() {
 		return categoria;
@@ -225,6 +220,46 @@ public class TwitterStatus {
 
 	public void setEmpresaId(String empresaId) {
 		this.empresaId = empresaId;
+	}
+
+	public long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(long userId) {
+		this.userId = userId;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getUserScreenName() {
+		return userScreenName;
+	}
+
+	public void setUserScreenName(String userScreenName) {
+		this.userScreenName = userScreenName;
+	}
+
+	public String getUserProfilePicUrl() {
+		return userProfilePicUrl;
+	}
+
+	public void setUserProfilePicUrl(String userProfilePicUrl) {
+		this.userProfilePicUrl = userProfilePicUrl;
+	}
+
+	public String getUserMinProfilePicUrl() {
+		return userMinProfilePicUrl;
+	}
+
+	public void setUserMinProfilePicUrl(String userMinProfilePicUrl) {
+		this.userMinProfilePicUrl = userMinProfilePicUrl;
 	}
 	
 }

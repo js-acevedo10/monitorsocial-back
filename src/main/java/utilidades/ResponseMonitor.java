@@ -98,19 +98,19 @@ public class ResponseMonitor {
 		}
 		StringTokenizer st = new StringTokenizer(tweet.getText(), "[,. #]+-:=()");
 		double positive = 0, negative = 0;
-		int cat = 0;
+		int cat = Constantes.TWEET_TIPO_OTROS;
 		while(st.hasMoreTokens()) {
 			String next = st.nextToken().toLowerCase();
 			positive += Double.parseDouble(positiveList.get(next) != null?positiveList.get(next):"0");
 			negative += Double.parseDouble(negativeList.get(next) != null?negativeList.get(next):"0");
 			if(soporteList.get(0).equals(next)) {
-				cat = Constants.SOPORTE;
+				cat = Constantes.TWEET_TIPO_SOPORTE;
 			} else if(quejaList.contains(next)) {
-				cat = Constants.QUEJA;
+				cat = Constantes.TWEET_TIPO_QUEJA;
 			} else if(peticionList.contains(next)) {
-				cat = Constants.PETICION;
+				cat = Constantes.TWEET_TIPO_PETICION;
 			} else if(reclamoList.contains(next)) {
-				cat = Constants.RECLAMO;
+				cat = Constantes.TWEET_TIPO_RECLAMO;
 			}
 		}
 		tweet.setSentimiento(positive-negative==0?5:positive-negative);
