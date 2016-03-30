@@ -98,8 +98,8 @@ public class CasoDAO {
 	 */
 	public static Caso addTwitterCaso(TwitterStatus status, String empresaId) {
 		Caso caso = null;
-		int prioridad = Constantes.PRIORIDAD_MEDIA;
-		int gravedad = Constantes.PRIORIDAD_BAJA;
+		String prioridad = Constantes.PRIORIDAD_MEDIA;
+		String gravedad = Constantes.PRIORIDAD_BAJA;
 		if(status.getSentimiento() < 5) {
 			prioridad = Constantes.PRIORIDAD_ALTA;
 			gravedad = Constantes.PRIORIDAD_ALTA;

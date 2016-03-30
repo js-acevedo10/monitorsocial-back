@@ -98,7 +98,7 @@ public class ResponseMonitor {
 		}
 		StringTokenizer st = new StringTokenizer(tweet.getText(), "[,. #]+-:=()");
 		double positive = 0, negative = 0;
-		int cat = Constantes.TWEET_TIPO_OTROS;
+		String cat = Constantes.TWEET_TIPO_OTROS;
 		while(st.hasMoreTokens()) {
 			String next = st.nextToken().toLowerCase();
 			positive += Double.parseDouble(positiveList.get(next) != null?positiveList.get(next):"0");

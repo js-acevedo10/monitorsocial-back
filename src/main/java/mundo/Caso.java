@@ -18,17 +18,13 @@ public class Caso {
 	 * Descripcion - Descripción Corta
 	 * Detalles - Extensión del caso
 	 * userId - nombre de usuario
-	 */
-	private String titulo, descripcion, detalles, twitterUserId, mongoUserId;
-	
-	/**
 	 * Prioridad - Urgencia por resolver
 	 * Etapa - Etapa en la que se encuentra
 	 * Estado - Estado en el tiempo (pasado, presente, futuro)
 	 * Gravedad - Impacto independiente de prioridad
 	 * Categoria - Soporte, Queja, Reclamo, Peticion
 	 */
-	private int prioridad, etapa, estado, gravedad, categoria;
+	private String titulo, descripcion, detalles, twitterUserId, mongoUserId, categoria, etapa, estado, prioridad, gravedad;
 	
 	/**
 	 * FechaCreacion - Fecha en la que se registra
@@ -67,7 +63,7 @@ public class Caso {
 		//MANDATORY
 	}
 	
-	public Caso(String userId, String titulo, String descripcion, String detalles, int prioridad, int gravedad, int categoria, int estado, String mongoUserId) {
+	public Caso(String userId, String titulo, String descripcion, String detalles, String prioridad, String gravedad, String categoria, String estado, String mongoUserId) {
 		this.twitterUserId = userId;
 		this.titulo = titulo;
 		this.descripcion = descripcion;
@@ -113,43 +109,43 @@ public class Caso {
 		this.detalles = detalles;
 	}
 
-	public int getPrioridad() {
+	public String getPrioridad() {
 		return prioridad;
 	}
 
-	public void setPrioridad(int prioridad) {
+	public void setPrioridad(String prioridad) {
 		this.prioridad = prioridad;
 	}
 
-	public int getEtapa() {
+	public String getEtapa() {
 		return etapa;
 	}
 
-	public void setEtapa(int etapa) {
+	public void setEtapa(String etapa) {
 		this.etapa = etapa;
 	}
 
-	public int getEstado() {
+	public String getEstado() {
 		return estado;
 	}
 
-	public void setEstado(int estado) {
+	public void setEstado(String estado) {
 		this.estado = estado;
 	}
 
-	public int getGravedad() {
+	public String getGravedad() {
 		return gravedad;
 	}
 
-	public void setGravedad(int gravedad) {
+	public void setGravedad(String gravedad) {
 		this.gravedad = gravedad;
 	}
 
-	public int getCategoria() {
+	public String getCategoria() {
 		return categoria;
 	}
 
-	public void setCategoria(int categoria) {
+	public void setCategoria(String categoria) {
 		this.categoria = categoria;
 	}
 

@@ -5,7 +5,6 @@ import java.util.Date;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
-import org.mongodb.morphia.annotations.Reference;
 
 import twitter4j.Status;
 import utilidades.Constantes;
@@ -15,9 +14,9 @@ public class TwitterStatus {
 	@Id ObjectId id;
 	private long statusId, inReplyToStatusId, inReplyToUserId, userId;
 	private Date createdAt;
-	private String text, source, placeCountryCode, placeCountry, placeType, placeFullName, placeStreetAddress, empresaId, userName, userScreenName, userProfilePicUrl, userMinProfilePicUrl;
+	private String text, source, placeCountryCode, placeCountry, placeType, placeFullName, placeStreetAddress, empresaId, userName, userScreenName, userProfilePicUrl, userMinProfilePicUrl, categoria;
 	private boolean truncated, favorited, retweeted, retweet, unread;
-	private int favoriteCount, retweetCount, categoria;
+	private int favoriteCount, retweetCount;
 	private double sentimiento;
 	
 	public TwitterStatus() {
@@ -190,7 +189,7 @@ public class TwitterStatus {
 		this.retweetCount = retweetCount;
 	}
 	
-	public int getCategoria() {
+	public String getCategoria() {
 		return categoria;
 	}
 
@@ -198,7 +197,7 @@ public class TwitterStatus {
 		return sentimiento;
 	}
 
-	public void setCategoria(int categoria) {
+	public void setCategoria(String categoria) {
 		this.categoria = categoria;
 	}
 
