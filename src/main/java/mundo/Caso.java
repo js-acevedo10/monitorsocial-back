@@ -37,7 +37,7 @@ public class Caso {
 	/**
 	 * Empresa - Empresa relacionada con el caso
 	 */
-	@Reference private Empresa empresa;
+	@Reference private Cuenta cuenta;
 	
 	/**
 	 * Persona - Persona de la empresa relacionada con el caso
@@ -181,12 +181,12 @@ public class Caso {
 		this.casoFacebook = casoFacebook;
 	}
 
-	public Empresa getEmpresa() {
-		return empresa;
+	public Cuenta getCuenta() {
+		return cuenta;
 	}
 
-	public void setEmpresa(Empresa empresa) {
-		this.empresa = empresa;
+	public void setCuenta(Cuenta cuenta) {
+		this.cuenta = cuenta;
 	}
 
 	public Persona getPersona() {

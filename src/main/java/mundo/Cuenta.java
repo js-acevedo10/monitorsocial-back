@@ -1,14 +1,15 @@
 package mundo;
 
 import java.util.Date;
+import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Reference;
 
-@Entity("empresas")
-public class Empresa {
+@Entity("cuentas")
+public class Cuenta {
 	
 	@Id ObjectId id;
 	
@@ -32,13 +33,15 @@ public class Empresa {
 	
 	private Date fechaCreacion;
 	
-	@Reference private Empleado gestorDeCuentas;
+	@Reference private Empleado gestorDeCuenta;
 	
-	public Empresa() {
+	@Reference private List<Persona> personas;
+	
+	public Cuenta() {
 		//MANDATORY
 	}
 
-	public Empresa(String nombre, String website, String direccionPrimaria, String direccionSecundaria, String ciudad,
+	public Cuenta(String nombre, String website, String direccionPrimaria, String direccionSecundaria, String ciudad,
 			String departamento, String pais, String correoInformacion, String correoVentas, String correoSoporte,
 			String correoGerencia, String tipo, String estado, String sector, String origen, int codigoPostal,
 			int telefonoInformacion, int telefonoVentas, int telefonoSoporte, int telefonoGerencia, int extInformacion,
@@ -276,11 +279,23 @@ public class Empresa {
 	}
 
 	public Empleado getGestorDeCuentas() {
-		return gestorDeCuentas;
+		return gestorDeCuenta;
 	}
 
 	public void setGestorDeCuentas(Empleado gestorDeCuentas) {
-		this.gestorDeCuentas = gestorDeCuentas;
+		this.gestorDeCuenta = gestorDeCuentas;
+	}
+
+	public List<Persona> getPersonas() {
+		return personas;
+	}
+
+	public void setPersonas(List<Persona> personas) {
+		this.personas = personas;
+	}
+	
+	public void addPersona(Persona persona) {
+		this.personas.add(persona);
 	}
 	
 }
