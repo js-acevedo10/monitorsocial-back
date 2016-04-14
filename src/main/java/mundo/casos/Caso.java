@@ -1,6 +1,8 @@
-package mundo;
+package mundo.casos;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -11,6 +13,11 @@ import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Reference;
 
+import mundo.Cuenta;
+import mundo.Empleado;
+import mundo.Persona;
+import mundo.TwitterStatus;
+import mundo.TwitterUser;
 import utilidades.Constantes;
 
 @XmlRootElement
@@ -64,6 +71,10 @@ public class Caso {
 	 * TwitterStatus - De tratarse de un caso twitter, el estado
 	 */
 	@Reference private TwitterStatus twitterStatus;
+	
+	@Reference private List<Nota> notas;
+	
+	@Reference private List<Historia> historial;
 
 	public Caso() {
 		//MANDATORY
@@ -233,5 +244,43 @@ public class Caso {
 
 	public void setMongoUserId(String mongoUserId) {
 		this.mongoUserId = mongoUserId;
+	}
+
+	public String getTwitterUserId() {
+		return twitterUserId;
+	}
+
+	public void setTwitterUserId(String twitterUserId) {
+		this.twitterUserId = twitterUserId;
+	}
+
+	public List<Nota> getNotas() {
+		return notas;
+	}
+
+	public void setNotas(List<Nota> notas) {
+		this.notas = notas;
+	}
+	
+	public void addNota(Nota nota) {
+		if(this.notas == null) {
+			this.notas = new ArrayList<Nota>();
+		}
+		this.notas.add(nota);
+	}
+
+	public List<Historia> getHistorial() {
+		return historial;
+	}
+
+	public void setHistorial(List<Historia> historial) {
+		this.historial = historial;
+	}
+	
+	public void addHistoria(Historia historia) {
+		if(historial == null) {
+			historial = new ArrayList<Historia>();
+		}
+		historial.add(historia);
 	}
 }

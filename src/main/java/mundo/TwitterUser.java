@@ -12,6 +12,7 @@ import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Reference;
 
+import mundo.casos.Caso;
 import twitter4j.User;
 
 @XmlRootElement
@@ -37,7 +38,7 @@ public class TwitterUser {
 		screenName = user.getScreenName();
 		location = user.getLocation();
 		description = user.getDescription();
-		profileImageUrl = user.getProfileImageURL();
+		profileImageUrl = user.getOriginalProfileImageURL();
 		miniProfileImageUrl = user.getMiniProfileImageURL();
 		url = user.getURL();
 		timeZone = user.getTimeZone();

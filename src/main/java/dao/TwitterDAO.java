@@ -12,10 +12,10 @@ import org.mongodb.morphia.query.Query;
 import com.google.gson.Gson;
 import com.mongodb.util.JSON;
 
-import mundo.Caso;
 import mundo.TwitterStatus;
 import mundo.TwitterUser;
 import mundo.Usuario;
+import mundo.casos.Caso;
 import twitter4j.Status;
 import utilidades.MorphiaDB;
 import utilidades.ResponseMonitor;

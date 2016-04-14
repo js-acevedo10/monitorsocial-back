@@ -1,18 +1,22 @@
 package dao;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import mundo.Caso;
 import mundo.TwitterStatus;
+import mundo.casos.Caso;
+import mundo.casos.Historia;
+import mundo.casos.Nota;
 import utilidades.Constantes;
 import utilidades.MorphiaDB;
 import utilidades.ObjectIdTypeAdapter;
@@ -70,6 +74,7 @@ public class CasoDAO {
 					.append("error", e.getMessage());
 			json = r.toJson();
 			status = Response.Status.INTERNAL_SERVER_ERROR;
+			e.printStackTrace();
 		}
 		return ResponseMonitor.buildResponse(json, status);
 	}
@@ -90,6 +95,68 @@ public class CasoDAO {
 					.append("saved", false);
 			json = resp.toJson();
 			status = Response.Status.NOT_MODIFIED;
+		}
+		return ResponseMonitor.buildResponse(json, status);
+	}
+	
+	public static Response addNota(Nota nota, String idCaso) {
+		nota.setFechaCreacion(new Date());
+		try {
+			Datastore db = MorphiaDB.getDatastore();
+			Query<Caso> q = db.createQuery(Caso.class)
+					.field("_id").equal(new ObjectId(idCaso));
+			Caso caso = (Caso) q.get();
+			if(caso != null) {
+				db.save(nota);
+				caso.addNota(nota);
+				db.save(caso);
+				json = gson.toJson(caso);
+				status = Response.Status.OK;
+			} else {
+				Document r = new Document()
+						.append("found", false);
+				json = r.toJson();
+				status = Response.Status.NOT_FOUND;
+			}
+		} catch(Exception e) {
+			Document r = new Document()
+					.append("found", false)
+					.append("modified", false)
+					.append("error", e.getMessage());
+			json = r.toJson();
+			status = Response.Status.INTERNAL_SERVER_ERROR;
+			e.printStackTrace();
+		}
+		return ResponseMonitor.buildResponse(json, status);
+	}
+	
+	public static Response addHistoria(Historia historia, String idCaso) {
+		historia.setFechaSuceso(new Date());
+		try {
+			Datastore db = MorphiaDB.getDatastore();
+			Query<Caso> q = db.createQuery(Caso.class)
+					.field("_id").equal(new ObjectId(idCaso));
+			Caso caso = (Caso) q.get();
+			if(caso != null) {
+				db.save(historia);
+				caso.addHistoria(historia);
+				db.save(caso);
+				json = gson.toJson(caso);
+				status = Response.Status.OK;
+			} else {
+				Document r = new Document()
+						.append("found", false);
+				json = r.toJson();
+				status = Response.Status.NOT_FOUND;
+			}
+		} catch(Exception e) {
+			Document r = new Document()
+					.append("found", false)
+					.append("modified", false)
+					.append("error", e.getMessage());
+			json = r.toJson();
+			status = Response.Status.INTERNAL_SERVER_ERROR;
+			e.printStackTrace();
 		}
 		return ResponseMonitor.buildResponse(json, status);
 	}
