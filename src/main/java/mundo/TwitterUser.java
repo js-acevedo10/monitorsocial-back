@@ -10,7 +10,7 @@ import org.mongodb.morphia.annotations.Reference;
 
 import twitter4j.User;
 
-@Entity("twitterUsers")
+@Entity("witterUsers")
 public class TwitterUser {
 	
 	@Id ObjectId id;

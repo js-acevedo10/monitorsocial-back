@@ -9,7 +9,7 @@ import org.mongodb.morphia.annotations.Reference;
 
 import utilidades.Constantes;
 
-@Entity("casos")
+@Entity("Casos")
 public class Caso {
 	
 	@Id ObjectId id;
