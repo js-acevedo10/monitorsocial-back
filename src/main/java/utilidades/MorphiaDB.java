@@ -20,6 +20,8 @@ public class MorphiaDB {
 			MongoClientURI mouri = new MongoClientURI(MONGO_URI);
 			datastore = morphia.createDatastore(new MongoClient(mouri), "monitor-social-crm");
 		}
+		datastore.ensureCaps();
+		datastore.ensureIndexes();
 		return datastore;
 	}
 }
