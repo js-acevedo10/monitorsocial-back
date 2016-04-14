@@ -3,10 +3,16 @@ package mundo;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity("Usuario")
 public class Usuario {
 	@Id ObjectId id;

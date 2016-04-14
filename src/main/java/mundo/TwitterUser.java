@@ -3,6 +3,10 @@ package mundo;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
@@ -10,7 +14,9 @@ import org.mongodb.morphia.annotations.Reference;
 
 import twitter4j.User;
 
-@Entity("witterUsers")
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+@Entity("TwitterUsers")
 public class TwitterUser {
 	
 	@Id ObjectId id;

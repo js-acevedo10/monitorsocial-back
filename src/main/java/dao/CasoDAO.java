@@ -44,6 +44,7 @@ public class CasoDAO {
 					.append("error", e.getMessage());
 			json = r.toJson();
 			status = Response.Status.INTERNAL_SERVER_ERROR;
+			e.printStackTrace();
 		}
 		return ResponseMonitor.buildResponse(json, status);
 	}

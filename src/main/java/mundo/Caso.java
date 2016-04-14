@@ -2,6 +2,10 @@ package mundo;
 
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
@@ -9,6 +13,8 @@ import org.mongodb.morphia.annotations.Reference;
 
 import utilidades.Constantes;
 
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity("Casos")
 public class Caso {
 	
