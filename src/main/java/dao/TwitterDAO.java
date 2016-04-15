@@ -227,10 +227,17 @@ public class TwitterDAO {
 				List<TwitterUser> listUser = (List<TwitterUser>) q.asList();
 				if(listUser != null && !listUser.isEmpty()) {
 					user = listUser.get(0);
+					user.setFollowersCount(s.getUser().getFollowersCount());
+					user.setFriendsCount(s.getUser().getFriendsCount());
+					user.setTimeZone(s.getUser().getTimeZone());
+					user.setName(s.getUser().getName());
+					user.setProfileImageUrl(s.getUser().getOriginalProfileImageURL());
+					user.setMiniProfileImageUrl(s.getUser().getMiniProfileImageURL());
+					user.setVerified(s.getUser().isVerified());
 				} else {
 					user = new TwitterUser(s.getUser());					
-					db.save(user);
 				}
+				db.save(user);
 				user.addStatus(status);
 				Caso caso = CasoDAO.addTwitterCaso(status, empresaId);
 				user.addCaso(caso);

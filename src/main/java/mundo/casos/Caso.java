@@ -37,7 +37,7 @@ public class Caso {
 	 * Gravedad - Impacto independiente de prioridad
 	 * Categoria - Soporte, Queja, Reclamo, Peticion
 	 */
-	private String titulo, descripcion, detalles, twitterUserId, mongoUserId, categoria, etapa, estado, prioridad, gravedad;
+	private String titulo, descripcion, detalles, twitterUserId, mongoUserId, categoria, etapa, estado, prioridad, gravedad, twitterUserName;
 	
 	/**
 	 * FechaCreacion - Fecha en la que se registra
@@ -282,5 +282,13 @@ public class Caso {
 			historial = new ArrayList<Historia>();
 		}
 		historial.add(historia);
+	}
+
+	public String getTwitterUserName() {
+		return twitterUserName;
+	}
+
+	public void setTwitterUserName(String twitterUserName) {
+		this.twitterUserName = twitterUserName;
 	}
 }

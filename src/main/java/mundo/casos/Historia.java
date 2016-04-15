@@ -12,22 +12,22 @@ import org.mongodb.morphia.annotations.Id;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@Entity("Notas")
+@Entity("Historias")
 public class Historia {
 	
 	@Id ObjectId id;
 	private Date fechaSuceso;
-	private String creador, creadorId, descripción;
+	private String creador, creadorId, descripcion;
 	
 	public Historia() {
 		
 	}
 	
-	public Historia(Date fechaSuceso, String creador, String creadorId, String descripción) {
+	public Historia(Date fechaSuceso, String creador, String creadorId, String descripcion) {
 		this.fechaSuceso = new Date();
 		this.creador = creador;
 		this.creadorId = creadorId;
-		this.descripción = descripción;
+		this.descripcion = descripcion;
 	}
 
 	public Date getFechaSuceso() {
@@ -55,10 +55,10 @@ public class Historia {
 	}
 
 	public String getDescripción() {
-		return descripción;
+		return descripcion;
 	}
 
 	public void setDescripción(String descripción) {
-		this.descripción = descripción;
+		this.descripcion = descripción;
 	}		
 }

@@ -167,14 +167,13 @@ public class CasoDAO {
 	public static Caso addTwitterCaso(TwitterStatus status, String empresaId) {
 		Caso caso = null;
 		String prioridad = Constantes.PRIORIDAD_MEDIA;
-		String gravedad = Constantes.PRIORIDAD_BAJA;
+		String gravedad = Constantes.PRIORIDAD_MEDIA;
 		if(status.getSentimiento() < 5) {
 			prioridad = Constantes.PRIORIDAD_ALTA;
 			gravedad = Constantes.PRIORIDAD_ALTA;
-		} else if(status.getSentimiento() > 5) {
-			
-		} else {
-			gravedad = Constantes.PRIORIDAD_MEDIA;
+		} else if(status.getSentimiento() > 15) {
+			prioridad = Constantes.PRIORIDAD_BAJA;
+			gravedad = Constantes.PRIORIDAD_BAJA;
 		}
 		caso = new Caso(status.getUserId()+"", 
 				"Caso Twitter", 
@@ -185,10 +184,15 @@ public class CasoDAO {
 				status.getCategoria(),
 				Constantes.CASO_ESTADO_PRESENTE,
 				empresaId);
+		caso.setTwitterUserName("@" + status.getUserScreenName());
+		Historia h = new Historia(new Date(), "MonitorSocialCRM", "System", "Etapa: Creado --> Registrado");
+		try {
+		Datastore db = MorphiaDB.getDatastore();
+		db.save(h);
+		caso.addHistoria(h);
 		caso.setCasoTwitter(true);
 		caso.setCasoFacebook(false);
-		try {
-			MorphiaDB.getDatastore().save(caso);
+		db.save(caso);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

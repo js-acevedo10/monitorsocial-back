@@ -61,6 +61,7 @@ public class TwitterStreamer {
 	};
 	
 	public static void startListening(String consumerKey, String consumerSecret, String token, String tokenSecret, List<String> trackTerms, String empresaId) throws InterruptedException {
+		try {
 		TwitterStreamer.empresaId = empresaId;
 		BlockingQueue<String> queue = new LinkedBlockingQueue<String>(1000);
 		StatusesFilterEndpoint hosebirdEndpoint = new StatusesFilterEndpoint();
@@ -83,6 +84,9 @@ public class TwitterStreamer {
 		for (int threads = 0; threads < numProcessingThreads; threads++) {
 			// This must be called once per processing thread
 			twitter4jStatusClient.process();
+		}
+		}catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
