@@ -58,7 +58,6 @@ public class TwitterStatus {
 		userProfilePicUrl = status.getUser().getProfileImageURL();
 		userMinProfilePicUrl = status.getUser().getMiniProfileImageURL();
 		this.empresaId = empresaId;
-		idConversacion = "none";
 	}
 
 	public ObjectId getId() {

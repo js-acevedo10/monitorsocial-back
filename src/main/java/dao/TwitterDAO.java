@@ -31,6 +31,11 @@ public class TwitterDAO {
 	private static Response.Status status = Response.Status.OK;
 	private static Gson gson = new GsonBuilder().registerTypeAdapter(ObjectId.class, new ObjectIdTypeAdapter()).create();
 
+	/**
+	 * Prende el listener de Twitter
+	 * @param userId
+	 * @return
+	 */
 	public static Response startListening(String userId) {
 		try {
 			Query<Usuario> q = MorphiaDB.getDatastore().createQuery(Usuario.class)
@@ -61,6 +66,11 @@ public class TwitterDAO {
 		return ResponseMonitor.buildResponse(json, status);
 	}
 
+	/**
+	 * Apaga el Listener de Twitter
+	 * @param userId
+	 * @return
+	 */
 	public static Response stopListening(String userId) {
 		try {
 			Query<Usuario> q = MorphiaDB.getDatastore().createQuery(Usuario.class)
@@ -89,6 +99,11 @@ public class TwitterDAO {
 		return ResponseMonitor.buildResponse(json, status);
 	}
 
+	/**
+	 * Retorna los mensajes no leidos aun
+	 * @param userId
+	 * @return
+	 */
 	public static Response getUnread(String userId) {
 		try {
 			Query<TwitterStatus> q = MorphiaDB.getDatastore().createQuery(TwitterStatus.class)
@@ -120,6 +135,11 @@ public class TwitterDAO {
 		return ResponseMonitor.buildResponse(json, status);
 	}
 
+	/**
+	 * Retorna los mensajes clasificados como positivos no leidos
+	 * @param userId
+	 * @return
+	 */
 	public static Response getPositive(String userId) {
 		try {
 			Query<TwitterStatus> q = MorphiaDB.getDatastore().createQuery(TwitterStatus.class)
@@ -152,6 +172,11 @@ public class TwitterDAO {
 		return ResponseMonitor.buildResponse(json, status);
 	}
 
+	/**
+	 * Retorna los mensajes negativos no leidos
+	 * @param userId
+	 * @return
+	 */
 	public static Response getNegative(String userId) {
 		try {
 			Query<TwitterStatus> q = MorphiaDB.getDatastore().createQuery(TwitterStatus.class)
@@ -184,6 +209,11 @@ public class TwitterDAO {
 		return ResponseMonitor.buildResponse(json, status);
 	}
 
+	/**
+	 * Retorna los mensajes neutrales no leidos
+	 * @param userId
+	 * @return
+	 */
 	public static Response getNeutral(String userId) {
 		try {
 			Query<TwitterStatus> q = MorphiaDB.getDatastore().createQuery(TwitterStatus.class)
@@ -216,6 +246,12 @@ public class TwitterDAO {
 		return ResponseMonitor.buildResponse(json, status);
 	}
 
+	/**
+	 * Responde un mensaje de Twitter y lo añade a la conversación
+	 * @param userId
+	 * @param document
+	 * @return
+	 */
 	public static Response postReply(String userId, Document document) {
 		StatusUpdate statusUpdate = new StatusUpdate("@" + document.getString("userScreenName") + " " + document.getString("text"));
 		statusUpdate.inReplyToStatusId(Long.parseLong(document.getString("statusId")));
@@ -251,6 +287,11 @@ public class TwitterDAO {
 		return ResponseMonitor.buildResponse(json, status);
 	}
 
+	/**
+	 * Cuando se oye un nuevo status de Twitter que cumple con los filtros, aca se procesa
+	 * @param s
+	 * @param empresaId
+	 */
 	public static void handleNewStatus(Status s, String empresaId) {
 		try {
 			System.out.println(s.getText());
@@ -299,6 +340,12 @@ public class TwitterDAO {
 		}
 	}
 
+	/**
+	 * Revisa si un mensaje entrante hace parte o no de una conversacion previa, de ser así añade el mensaje a la conversacion y no a un caso nuevo
+	 * @param s
+	 * @param empresaId
+	 * @return
+	 */
 	private static boolean checkIfReplyIsMine(Status s, String empresaId) {
 		try {
 			Datastore db = MorphiaDB.getDatastore();
