@@ -223,6 +223,7 @@ public class TwitterDAO {
 		try {
 			Status s = TwitterStreamer.getTwitterWriter().updateStatus(statusUpdate);
 			TwitterStatus twitterStatus = new TwitterStatus(s, userId);
+			twitterStatus.setIdConversacion(document.getString("conversacionId"));
 			Datastore db = MorphiaDB.getDatastore();
 			db.save(twitterStatus);
 			Query<ConversacionTwitter> q = db.createQuery(ConversacionTwitter.class)
@@ -255,7 +256,7 @@ public class TwitterDAO {
 			System.out.println(s.getText());
 
 			if(s.getInReplyToStatusId() != -1) {
-				if(checkIfReplyIsMine(s)) {
+				if(checkIfReplyIsMine(s, empresaId)) {
 					return;
 				}
 			}
@@ -298,7 +299,7 @@ public class TwitterDAO {
 		}
 	}
 
-	private static boolean checkIfReplyIsMine(Status s) {
+	private static boolean checkIfReplyIsMine(Status s, String empresaId) {
 		try {
 			Datastore db = MorphiaDB.getDatastore();
 			Query<TwitterStatus> q = db.createQuery(TwitterStatus.class)
@@ -306,11 +307,14 @@ public class TwitterDAO {
 					.field("userId").equal(s.getInReplyToUserId()+"");
 			TwitterStatus st = (TwitterStatus) q.get();
 			if(st != null) {
+				Document x = Document.parse(gson.toJson(st));
 				Query<ConversacionTwitter> q1 = db.createQuery(ConversacionTwitter.class)
-						.field("id").equal(new ObjectId(st.getIdConversacion()));
+						.field("id").equal(new ObjectId(x.getString("idConversacion")));
 				ConversacionTwitter conversacionTwitter = q1.get();
 				if(conversacionTwitter != null) {
-					conversacionTwitter.addMensaje(st);
+					TwitterStatus twitterStatus = new TwitterStatus(s, empresaId);
+					db.save(twitterStatus);
+					conversacionTwitter.addMensaje(twitterStatus);
 					db.save(conversacionTwitter);
 					return true;
 				}
