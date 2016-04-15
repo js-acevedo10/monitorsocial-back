@@ -15,6 +15,7 @@ import com.google.gson.GsonBuilder;
 
 import mundo.TwitterStatus;
 import mundo.casos.Caso;
+import mundo.casos.ConversacionTwitter;
 import mundo.casos.Historia;
 import mundo.casos.Nota;
 import utilidades.Constantes;
@@ -30,10 +31,20 @@ public class CasoDAO {
 	
 	public static Response getCasos(String idUsuario) {
 		try {
-			Query<Caso> q = MorphiaDB.getDatastore().createQuery(Caso.class)
+			Datastore db = MorphiaDB.getDatastore();
+			Query<Caso> q = db.createQuery(Caso.class)
 					.field("mongoUserId").equal(idUsuario);
 			List<Caso> casos = (List<Caso>) q.asList();
 			if(casos != null && !casos.isEmpty()) {
+				for (Caso caso : casos) {
+					if(caso.getEtapa().equals(Constantes.CASO_ETAPA_REGISTRADA)) {
+						caso.setEtapa(Constantes.CASO_ETAPA_COLA);
+						Historia h = new Historia(new Date(), "MonitorSocialCRM", "System", "Etapa: Registrada --> En Cola");
+						db.save(h);
+						caso.addHistoria(h);
+						db.save(caso);
+					}
+				}
 				json = gson.toJson(casos);
 				status = Response.Status.OK;
 			} else {
@@ -55,12 +66,20 @@ public class CasoDAO {
 	
 	public static Response getCaso(String idUsuario, String idCaso) {
 		try {
-			Query<Caso> q = MorphiaDB.getDatastore().createQuery(Caso.class)
+			Datastore db = MorphiaDB.getDatastore();
+			Query<Caso> q = db.createQuery(Caso.class)
 					.field("_id").equal(new ObjectId(idCaso))
 					.field("mongoUserId").equal(idUsuario);
-			List<Caso> casos = (List<Caso>) q.asList();
-			if(casos != null && !casos.isEmpty()) {
-				json = gson.toJson(casos.get(0));
+			Caso caso = (Caso) q.get();
+			if(caso != null) {
+				if(caso.getEtapa().equals(Constantes.CASO_ETAPA_COLA)) {
+					caso.setEtapa(Constantes.CASO_ETAPA_ESPERANDO);
+					Historia h = new Historia(new Date(), "MonitorSocialCRM", "System", "Etapa: En Cola --> Esperando");
+					db.save(h);
+					caso.addHistoria(h);
+					db.save(caso);
+				}
+				json = gson.toJson(caso);
 				status = Response.Status.OK;
 			} else {
 				Document r = new Document()
@@ -168,10 +187,10 @@ public class CasoDAO {
 		Caso caso = null;
 		String prioridad = Constantes.PRIORIDAD_MEDIA;
 		String gravedad = Constantes.PRIORIDAD_MEDIA;
-		if(status.getSentimiento() < 5) {
+		if(status.getSentimiento() < 3) {
 			prioridad = Constantes.PRIORIDAD_ALTA;
 			gravedad = Constantes.PRIORIDAD_ALTA;
-		} else if(status.getSentimiento() > 15) {
+		} else if(status.getSentimiento() > 7) {
 			prioridad = Constantes.PRIORIDAD_BAJA;
 			gravedad = Constantes.PRIORIDAD_BAJA;
 		}
@@ -186,10 +205,14 @@ public class CasoDAO {
 				empresaId);
 		caso.setTwitterUserName("@" + status.getUserScreenName());
 		Historia h = new Historia(new Date(), "MonitorSocialCRM", "System", "Etapa: Creado --> Registrado");
+		ConversacionTwitter conversacion = new ConversacionTwitter(new Date(), status.getUserId()+"", empresaId);
+		conversacion.addMensaje(status);
 		try {
 		Datastore db = MorphiaDB.getDatastore();
 		db.save(h);
 		caso.addHistoria(h);
+		db.save(conversacion);
+		caso.setConversacion(conversacion);
 		caso.setCasoTwitter(true);
 		caso.setCasoFacebook(false);
 		db.save(caso);

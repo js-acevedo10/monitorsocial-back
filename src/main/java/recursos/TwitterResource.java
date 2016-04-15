@@ -2,12 +2,16 @@ package recursos;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.bson.Document;
 
 import dao.TwitterDAO;
 import security.Roles;
@@ -63,5 +67,15 @@ public class TwitterResource {
 	@Path("/{userId}/neutralMessages")
 	public static Response getNeutral(@PathParam("userId") String userId) {
 		return TwitterDAO.getNeutral(userId);
+	}
+	
+	@RolesAllowed(Roles.EMPRESA)
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{userId}/reply")
+	public static Response postReply(@PathParam("userId") String userId, String json) {
+		Document doc = Document.parse(json);
+		return TwitterDAO.postReply(userId, doc);
 	}
 }

@@ -18,9 +18,10 @@ import utilidades.Constantes;
 @Entity("TwitterStatuses")
 public class TwitterStatus {
 	@Id ObjectId id;
-	private long statusId, inReplyToStatusId, inReplyToUserId, userId;
+	private String statusId, inReplyToStatusId, inReplyToUserId, userId;
 	private Date createdAt;
 	private String text, source, placeCountryCode, placeCountry, placeType, placeFullName, placeStreetAddress, empresaId, userName, userScreenName, userProfilePicUrl, userMinProfilePicUrl, categoria;
+	private String idConversacion;
 	private boolean truncated, favorited, retweeted, retweet, unread;
 	private int favoriteCount, retweetCount;
 	private double sentimiento;
@@ -30,9 +31,9 @@ public class TwitterStatus {
 	}
 	
 	public TwitterStatus(Status status, String empresaId) {
-		statusId = status.getId();
-		inReplyToStatusId = status.getInReplyToStatusId();
-		inReplyToUserId = status.getInReplyToUserId();
+		statusId = status.getId()+"";
+		inReplyToStatusId = status.getInReplyToStatusId()+"";
+		inReplyToUserId = status.getInReplyToUserId()+"";
 		createdAt = status.getCreatedAt();
 		text = status.getText();
 		source = status.getSource();
@@ -51,23 +52,32 @@ public class TwitterStatus {
 		retweetCount = status.getRetweetCount();
 		unread = true;
 		categoria = Constantes.TWEET_TIPO_OTROS;
-		userId = status.getUser().getId();
+		userId = status.getUser().getId()+"";
 		userName = status.getUser().getName();
 		userScreenName = status.getUser().getScreenName();
 		userProfilePicUrl = status.getUser().getProfileImageURL();
 		userMinProfilePicUrl = status.getUser().getMiniProfileImageURL();
 		this.empresaId = empresaId;
+		idConversacion = "none";
 	}
 
-	public long getStatusId() {
+	public ObjectId getId() {
+		return id;
+	}
+
+	public void setId(ObjectId id) {
+		this.id = id;
+	}
+
+	public String getStatusId() {
 		return statusId;
 	}
 
-	public long getInReplyToStatusId() {
+	public String getInReplyToStatusId() {
 		return inReplyToStatusId;
 	}
 
-	public long getInReplyToUserId() {
+	public String getInReplyToUserId() {
 		return inReplyToUserId;
 	}
 
@@ -127,15 +137,15 @@ public class TwitterStatus {
 		return retweetCount;
 	}
 
-	public void setStatusId(long statusId) {
+	public void setStatusId(String statusId) {
 		this.statusId = statusId;
 	}
 
-	public void setInReplyToStatusId(long inReplyToStatusId) {
+	public void setInReplyToStatusId(String inReplyToStatusId) {
 		this.inReplyToStatusId = inReplyToStatusId;
 	}
 
-	public void setInReplyToUserId(long inReplyToUserId) {
+	public void setInReplyToUserId(String inReplyToUserId) {
 		this.inReplyToUserId = inReplyToUserId;
 	}
 
@@ -227,11 +237,11 @@ public class TwitterStatus {
 		this.empresaId = empresaId;
 	}
 
-	public long getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(long userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
@@ -265,6 +275,14 @@ public class TwitterStatus {
 
 	public void setUserMinProfilePicUrl(String userMinProfilePicUrl) {
 		this.userMinProfilePicUrl = userMinProfilePicUrl;
+	}
+
+	public String getIdConversacion() {
+		return idConversacion;
+	}
+
+	public void setIdConversacion(String idConversacion) {
+		this.idConversacion = idConversacion;
 	}
 	
 }

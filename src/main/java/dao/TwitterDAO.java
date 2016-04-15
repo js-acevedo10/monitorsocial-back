@@ -10,14 +10,18 @@ import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mongodb.util.JSON;
 
 import mundo.TwitterStatus;
 import mundo.TwitterUser;
 import mundo.Usuario;
 import mundo.casos.Caso;
+import mundo.casos.ConversacionTwitter;
 import twitter4j.Status;
+import twitter4j.StatusUpdate;
 import utilidades.MorphiaDB;
+import utilidades.ObjectIdTypeAdapter;
 import utilidades.ResponseMonitor;
 import utilidades.TwitterStreamer;
 
@@ -25,6 +29,7 @@ public class TwitterDAO {
 
 	private static String json = "";
 	private static Response.Status status = Response.Status.OK;
+	private static Gson gson = new GsonBuilder().registerTypeAdapter(ObjectId.class, new ObjectIdTypeAdapter()).create();
 
 	public static Response startListening(String userId) {
 		try {
@@ -211,14 +216,55 @@ public class TwitterDAO {
 		return ResponseMonitor.buildResponse(json, status);
 	}
 
+	public static Response postReply(String userId, Document document) {
+		StatusUpdate statusUpdate = new StatusUpdate("@" + document.getString("userScreenName") + " " + document.getString("text"));
+		statusUpdate.inReplyToStatusId(Long.parseLong(document.getString("statusId")));
+		System.out.println(statusUpdate.getInReplyToStatusId());
+		try {
+			Status s = TwitterStreamer.getTwitterWriter().updateStatus(statusUpdate);
+			TwitterStatus twitterStatus = new TwitterStatus(s, userId);
+			Datastore db = MorphiaDB.getDatastore();
+			db.save(twitterStatus);
+			Query<ConversacionTwitter> q = db.createQuery(ConversacionTwitter.class)
+					.field("id").equal(new ObjectId(document.getString("conversacionId")));
+			ConversacionTwitter conversacionTwitter = (ConversacionTwitter) q.get();
+			if(conversacionTwitter != null) {
+				conversacionTwitter.addMensaje(twitterStatus);
+				db.save(conversacionTwitter);
+				json = gson.toJson(conversacionTwitter);
+				status = Response.Status.OK;
+			} else {
+				Document resp = new Document()
+						.append("added", false);
+				json = resp.toJson();
+				status = Response.Status.NOT_MODIFIED;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			Document resp = new Document()
+					.append("added", false)
+					.append("error", e.getMessage());
+			json = resp.toJson();
+			status = Response.Status.INTERNAL_SERVER_ERROR;
+		}
+		return ResponseMonitor.buildResponse(json, status);
+	}
+
 	public static void handleNewStatus(Status s, String empresaId) {
 		try {
 			System.out.println(s.getText());
+
+			if(s.getInReplyToStatusId() != -1) {
+				if(checkIfReplyIsMine(s)) {
+					return;
+				}
+			}
 			Datastore db = MorphiaDB.getDatastore();
 
 			TwitterStatus status = new TwitterStatus(s, empresaId);
 			ResponseMonitor.classifyTweet(status);
 			db.save(status);
+
 			if(status.getCategoria() != utilidades.Constantes.TWEET_TIPO_OTROS) {
 				TwitterUser user = null;
 				Query<TwitterUser> q = db.createQuery(TwitterUser.class)
@@ -240,6 +286,8 @@ public class TwitterDAO {
 				db.save(user);
 				user.addStatus(status);
 				Caso caso = CasoDAO.addTwitterCaso(status, empresaId);
+				status.setIdConversacion(caso.getConversacion().getId().toString());
+				db.save(status);
 				user.addCaso(caso);
 				db.save(user);
 			}
@@ -248,5 +296,29 @@ public class TwitterDAO {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private static boolean checkIfReplyIsMine(Status s) {
+		try {
+			Datastore db = MorphiaDB.getDatastore();
+			Query<TwitterStatus> q = db.createQuery(TwitterStatus.class)
+					.field("statusId").equal(s.getInReplyToStatusId()+"")
+					.field("userId").equal(s.getInReplyToUserId()+"");
+			TwitterStatus st = (TwitterStatus) q.get();
+			if(st != null) {
+				Query<ConversacionTwitter> q1 = db.createQuery(ConversacionTwitter.class)
+						.field("id").equal(new ObjectId(st.getIdConversacion()));
+				ConversacionTwitter conversacionTwitter = q1.get();
+				if(conversacionTwitter != null) {
+					conversacionTwitter.addMensaje(st);
+					db.save(conversacionTwitter);
+					return true;
+				}
+				System.out.println("Conversacion no encontrada");
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

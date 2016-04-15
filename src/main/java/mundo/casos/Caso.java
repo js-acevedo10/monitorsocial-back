@@ -75,6 +75,8 @@ public class Caso {
 	@Reference private List<Nota> notas;
 	
 	@Reference private List<Historia> historial;
+	
+	@Reference private ConversacionTwitter conversacion;
 
 	public Caso() {
 		//MANDATORY
@@ -290,5 +292,13 @@ public class Caso {
 
 	public void setTwitterUserName(String twitterUserName) {
 		this.twitterUserName = twitterUserName;
+	}
+
+	public ConversacionTwitter getConversacion() {
+		return conversacion;
+	}
+
+	public void setConversacion(ConversacionTwitter conversacion) {
+		this.conversacion = conversacion;
 	}
 }
