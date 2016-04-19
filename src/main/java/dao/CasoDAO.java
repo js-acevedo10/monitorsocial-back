@@ -68,8 +68,7 @@ public class CasoDAO {
 		try {
 			Datastore db = MorphiaDB.getDatastore();
 			Query<Caso> q = db.createQuery(Caso.class)
-					.field("_id").equal(new ObjectId(idCaso))
-					.field("mongoUserId").equal(idUsuario);
+					.field("_id").equal(new ObjectId(idCaso));
 			Caso caso = (Caso) q.get();
 			if(caso != null) {
 				if(caso.getEtapa().equals(Constantes.CASO_ETAPA_COLA)) {
