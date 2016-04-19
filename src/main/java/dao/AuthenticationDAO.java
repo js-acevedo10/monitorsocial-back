@@ -20,24 +20,28 @@ public class AuthenticationDAO {
 	private static Response.Status status = Response.Status.OK;
 
 	public static Response login(String email, String password) {
-		Query<Usuario> q = MorphiaDB.getDatastore().createQuery(Usuario.class)
-				.field("email").equal(email)
-				.field("password").equal(password);
-		List<Usuario> user = q.asList();
-		if(user != null && !user.isEmpty()) {
-			Usuario r = user.get(0);
-			String at = "Basic " + Base64.encodeAsString(r.getId() + ":" + r.getPassword());
-			Document resp = new Document()
-					.append("id", r.getId())
-					.append("name", r.getName())
-					.append("twitterId", r.getTwitterId())
-					.append("accessToken", at)
-					.append("role", Roles.EMPRESA);
-			json = resp.toJson();
-			status = Response.Status.OK;
-		} else {
-			json = "{\"error\":\"not a valid user\"}";
-			status = Response.Status.BAD_REQUEST;
+		try {
+			Query<Usuario> q = MorphiaDB.getDatastore().createQuery(Usuario.class)
+					.field("email").equal(email)
+					.field("password").equal(password);
+			List<Usuario> user = q.asList();
+			if(user != null && !user.isEmpty()) {
+				Usuario r = user.get(0);
+				String at = "Basic " + Base64.encodeAsString(r.getId() + ":" + r.getPassword());
+				Document resp = new Document()
+						.append("id", r.getId())
+						.append("name", r.getName())
+						.append("twitterId", r.getTwitterId())
+						.append("accessToken", at)
+						.append("role", Roles.EMPRESA);
+				json = resp.toJson();
+				status = Response.Status.OK;
+			} else {
+				json = "{\"error\":\"not a valid user\"}";
+				status = Response.Status.BAD_REQUEST;
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
 		}
 		return ResponseMonitor.buildResponse(json, status);
 	}

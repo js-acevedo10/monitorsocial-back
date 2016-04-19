@@ -97,6 +97,32 @@ public class CasoDAO {
 		return ResponseMonitor.buildResponse(json, status);
 	}
 	
+	public static Response getConversacion(String idConversacion) {
+		try {
+			Datastore db = MorphiaDB.getDatastore();
+			Query<ConversacionTwitter> q = db.createQuery(ConversacionTwitter.class)
+					.field("_id").equal(new ObjectId(idConversacion));
+			ConversacionTwitter conversacionTwitter = (ConversacionTwitter) q.get();
+			if(conversacionTwitter != null) {
+				json = gson.toJson(conversacionTwitter);
+				status = Response.Status.OK;
+			} else {
+				Document r = new Document()
+						.append("found", false);
+				json = r.toJson();
+				status = Response.Status.NOT_FOUND;
+			}
+		} catch(Exception e) {
+			Document r = new Document()
+					.append("found", false)
+					.append("error", e.getMessage());
+			json = r.toJson();
+			status = Response.Status.INTERNAL_SERVER_ERROR;
+			e.printStackTrace();
+		}
+		return ResponseMonitor.buildResponse(json, status);
+	}
+	
 	/**
 	 * Añade un caso a la base de datos
 	 */

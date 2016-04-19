@@ -35,6 +35,14 @@ public class CasoResource {
 		return CasoDAO.getCaso(idUsuario, idCaso);
 	}
 	
+	@GET
+	@RolesAllowed(Roles.EMPRESA)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/conversaciones/{idConversacion}")
+	public static Response getConversacion(@PathParam("idConversacion") String idConversacion) {
+		return CasoDAO.getConversacion(idConversacion);
+	}
+	
 	@RolesAllowed(Roles.EMPRESA)
 	@POST
 	@Path("/{idCaso}/notas")
