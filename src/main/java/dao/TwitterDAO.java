@@ -39,11 +39,12 @@ public class TwitterDAO {
 	public static Response startListening(String userId) {
 		try {
 			Query<Usuario> q = MorphiaDB.getDatastore().createQuery(Usuario.class)
+					.field("unread").equal(true)
 					.field("id").equal(new ObjectId(userId));
 			List<Usuario> r = (List<Usuario>) q.asList();
 			if(r != null && !r.isEmpty()) {
 				Usuario e = r.get(0);
-				TwitterStreamer.startListening("bGPtpsnIx0eQJuVtXtHncfZUA", "dAg6JZB84XXlKn21VGqxGSofaJtkIaD8c9pUrqCJJbyWSMZ2bD", "2334095631-QwupYxwRjThfNx7s4j24Vo28ylS64NFs7LA4Fqh", "4XVrQTuvs02XO6WTqhwJz8Pq2P9m4B00JI4X0lVZnafV9", e.getKeyWords(), e.getId());
+				TwitterStreamer.startListening(e.getKeyWords(), e.getId());
 				Document resp = new Document()
 						.append("listening", true)
 						.append("terms", e.getKeyWords());
@@ -92,6 +93,54 @@ public class TwitterDAO {
 			e.printStackTrace();
 			Document resp = new Document()
 					.append("stopped", false)
+					.append("error", e.getMessage());
+			json = resp.toJson();
+			status = Response.Status.INTERNAL_SERVER_ERROR;
+		}
+		return ResponseMonitor.buildResponse(json, status);
+	}
+	
+	/**
+	 * Retorna el counter de mensajes
+	 * @param userId
+	 * @return
+	 */
+	public static Response getMensajesCount(String userId) {
+		try {
+			Query<TwitterStatus> q = MorphiaDB.getDatastore().createQuery(TwitterStatus.class)
+					.field("empresaId").equal(userId);
+			List<TwitterStatus> r = (List<TwitterStatus>) q.asList();
+			if(r != null && !r.isEmpty()) {
+				int posCount = 0;
+				int negCount = 0;
+				int neutCount = 0;
+				for (TwitterStatus twitterStatus : r) {
+					double sent = twitterStatus.getSentimiento();
+					if(sent == 5) {
+						neutCount++;
+					} else if(sent > 5) {
+						posCount++;
+					} else {
+						negCount++;
+					}
+				}
+				Document resp = new Document()
+						.append("unreadCount", r.size())
+						.append("positiveCount", posCount)
+						.append("neutralCount", neutCount)
+						.append("negativeCount", negCount);
+				json = resp.toJson();
+				status = Response.Status.OK;
+			} else {
+				Document resp = new Document()
+						.append("found", false);
+				json = resp.toJson();
+				status = Response.Status.NOT_FOUND;
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+			Document resp = new Document()
+					.append("found", false)
 					.append("error", e.getMessage());
 			json = resp.toJson();
 			status = Response.Status.INTERNAL_SERVER_ERROR;

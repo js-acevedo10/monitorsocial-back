@@ -48,10 +48,19 @@ public class TwitterResource {
 	@RolesAllowed(Roles.EMPRESA)
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{userId}/messageCount")
+	public static Response getMessageCount(@PathParam("userId") String userId) {
+		return TwitterDAO.getMensajesCount(userId);
+	}
+	
+	@RolesAllowed(Roles.EMPRESA)
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{userId}/positiveMessages")
 	public static Response getPositive(@PathParam("userId") String userId) {
 		return TwitterDAO.getPositive(userId);
 	}
+	
 	
 	@RolesAllowed(Roles.EMPRESA)
 	@GET

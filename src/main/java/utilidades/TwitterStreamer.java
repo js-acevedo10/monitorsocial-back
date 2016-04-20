@@ -28,10 +28,14 @@ import twitter4j.auth.AccessToken;
 public class TwitterStreamer {
 
 	private static Authentication auth;
-	private static String consumerKeyA = "bGPtpsnIx0eQJuVtXtHncfZUA";
-	private static String consumerSecretA = "dAg6JZB84XXlKn21VGqxGSofaJtkIaD8c9pUrqCJJbyWSMZ2bD";
-	private static String tokenA = "2334095631-QwupYxwRjThfNx7s4j24Vo28ylS64NFs7LA4Fqh";
-	private static String tokenSecretA = "4XVrQTuvs02XO6WTqhwJz8Pq2P9m4B00JI4X0lVZnafV9";
+	private static String consumerKey = "bGPtpsnIx0eQJuVtXtHncfZUA";
+	private static String consumerSecret = "dAg6JZB84XXlKn21VGqxGSofaJtkIaD8c9pUrqCJJbyWSMZ2bD";
+	private static String token = "2334095631-QwupYxwRjThfNx7s4j24Vo28ylS64NFs7LA4Fqh";
+	private static String tokenSecret = "4XVrQTuvs02XO6WTqhwJz8Pq2P9m4B00JI4X0lVZnafV9";
+	private static String consumerKeyA = System.getenv("TWITTER_CON_KEY");
+	private static String consumerSecretA = System.getenv("TWITTER_CON_SEC");
+	private static String tokenA = System.getenv("TWITTER_TOK");
+	private static String tokenSecretA = System.getenv("TWITTER_TOK_SEC");
 	private static String empresaId;
 	private static StatusListener statusListener = new StatusListener() {
 
@@ -73,15 +77,17 @@ public class TwitterStreamer {
 	public static Twitter getTwitterWriter() {
 		if (twitter == null) {
 			twitter = TwitterFactory.getSingleton();
-			twitter.setOAuthConsumer(consumerKeyA, consumerSecretA);
-			AccessToken accessToken = new AccessToken(tokenA, tokenSecretA);
+			twitter.setOAuthConsumer(consumerKey, consumerSecret);
+			AccessToken accessToken = new AccessToken(token, tokenSecret);
 			twitter.setOAuthAccessToken(accessToken);
 		}
 		return twitter;
 	}
 
-	public static void startListening(String consumerKey, String consumerSecret, String token, String tokenSecret,
-			List<String> trackTerms, String empresaId) throws InterruptedException {
+	public static void startListening(List<String> trackTerms, String empresaId) throws InterruptedException {
+		if(twitter4jStatusClient != null) {
+			twitter4jStatusClient.stop();
+		}
 		try {
 			TwitterStreamer.empresaId = empresaId;
 			BlockingQueue<String> queue = new LinkedBlockingQueue<String>(1000);
