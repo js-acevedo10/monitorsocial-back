@@ -39,7 +39,6 @@ public class TwitterDAO {
 	public static Response startListening(String userId) {
 		try {
 			Query<Usuario> q = MorphiaDB.getDatastore().createQuery(Usuario.class)
-					.field("unread").equal(true)
 					.field("id").equal(new ObjectId(userId));
 			List<Usuario> r = (List<Usuario>) q.asList();
 			if(r != null && !r.isEmpty()) {
@@ -108,6 +107,7 @@ public class TwitterDAO {
 	public static Response getMensajesCount(String userId) {
 		try {
 			Query<TwitterStatus> q = MorphiaDB.getDatastore().createQuery(TwitterStatus.class)
+					.field("unread").equal(true)
 					.field("empresaId").equal(userId);
 			List<TwitterStatus> r = (List<TwitterStatus>) q.asList();
 			if(r != null && !r.isEmpty()) {
