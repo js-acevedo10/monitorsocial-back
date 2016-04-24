@@ -96,7 +96,7 @@ public class ResponseMonitor {
 				|| reclamoList == null || reclamoList.isEmpty()) {
 			loadLists();
 		}
-		StringTokenizer st = new StringTokenizer(tweet.getText(), "[,. ]+-:=()");
+		StringTokenizer st = new StringTokenizer(tweet.getText(), "[,. #]+-:=()");
 		double positive = 0, negative = 0;
 		String cat = Constantes.TWEET_TIPO_OTROS;
 		while(st.hasMoreTokens()) {
