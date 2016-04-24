@@ -96,13 +96,11 @@ public class ResponseMonitor {
 				|| reclamoList == null || reclamoList.isEmpty()) {
 			loadLists();
 		}
-		StringTokenizer st = new StringTokenizer(tweet.getText(), "[,. #]+-:=()");
+		StringTokenizer st = new StringTokenizer(tweet.getText(), "[,. ]+-:=()");
 		double positive = 0, negative = 0;
 		String cat = Constantes.TWEET_TIPO_OTROS;
 		while(st.hasMoreTokens()) {
 			String next = st.nextToken().toLowerCase();
-			positive += Double.parseDouble(positiveList.get(next) != null?positiveList.get(next):"0");
-			negative += Double.parseDouble(negativeList.get(next) != null?negativeList.get(next):"0");
 			if(soporteList.get(0).equals(next)) {
 				cat = Constantes.TWEET_TIPO_SOPORTE;
 			} else if(quejaList.contains(next)) {
@@ -111,6 +109,9 @@ public class ResponseMonitor {
 				cat = Constantes.TWEET_TIPO_PETICION;
 			} else if(reclamoList.contains(next)) {
 				cat = Constantes.TWEET_TIPO_RECLAMO;
+			} else {
+				positive += Double.parseDouble(positiveList.get(next) != null?positiveList.get(next):"0");
+				negative += Double.parseDouble(negativeList.get(next) != null?negativeList.get(next):"0");
 			}
 		}
 		tweet.setSentimiento(positive-negative==0?5:positive-negative);
