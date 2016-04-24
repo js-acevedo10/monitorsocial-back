@@ -213,11 +213,11 @@ public class CasoDAO {
 		String prioridad = Constantes.PRIORIDAD_MEDIA;
 		String gravedad = Constantes.PRIORIDAD_MEDIA;
 		if(status.getSentimiento() < 3) {
-			prioridad = Constantes.PRIORIDAD_ALTA;
-			gravedad = Constantes.PRIORIDAD_ALTA;
-		} else if(status.getSentimiento() > 7) {
 			prioridad = Constantes.PRIORIDAD_BAJA;
 			gravedad = Constantes.PRIORIDAD_BAJA;
+		} else if(status.getSentimiento() > 6) {
+			prioridad = Constantes.PRIORIDAD_ALTA;
+			gravedad = Constantes.PRIORIDAD_ALTA;
 		}
 		caso = new Caso(status.getUserId()+"", 
 				"Caso Twitter", 
