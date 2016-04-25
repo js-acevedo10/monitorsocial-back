@@ -388,7 +388,7 @@ public class TwitterDAO {
 					.field("id").equal(new ObjectId(idMencion));
 			TwitterStatus r = (TwitterStatus) q.get();
 			if(r != null) {
-				r.setUnread(true);
+				r.setUnread(false);
 				db.save(r);
 				Document resp = new Document()
 						.append("updated", true);
