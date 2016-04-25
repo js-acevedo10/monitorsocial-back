@@ -18,7 +18,7 @@ import utilidades.Constantes;
 @Entity("TwitterStatuses")
 public class TwitterStatus {
 	@Id ObjectId id;
-	private String statusId, inReplyToStatusId, inReplyToUserId, userId;
+	private String statusId, inReplyToStatusId, inReplyToUserId, userId, casoId;
 	private Date createdAt;
 	private String text, source, placeCountryCode, placeCountry, placeType, placeFullName, placeStreetAddress, empresaId, userName, userScreenName, userProfilePicUrl, userMinProfilePicUrl, categoria;
 	private String idConversacion;
@@ -58,6 +58,7 @@ public class TwitterStatus {
 		userProfilePicUrl = status.getUser().getProfileImageURL();
 		userMinProfilePicUrl = status.getUser().getMiniProfileImageURL();
 		this.empresaId = empresaId;
+		this.casoId = "-1";
 	}
 
 	public ObjectId getId() {
@@ -298,6 +299,14 @@ public class TwitterStatus {
 
 	public void setPropio(boolean propio) {
 		this.propio = propio;
+	}
+
+	public String getCasoId() {
+		return casoId;
+	}
+
+	public void setCasoId(String casoId) {
+		this.casoId = casoId;
 	}
 	
 }
