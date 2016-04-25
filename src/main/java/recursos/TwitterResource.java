@@ -87,4 +87,14 @@ public class TwitterResource {
 		Document doc = Document.parse(json);
 		return TwitterDAO.postReply(userId, doc);
 	}
+	
+	@RolesAllowed(Roles.EMPRESA)
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{userId}/reply/simple")
+	public static Response postReplySimple(@PathParam("userId") String userId, String json) {
+		Document doc = Document.parse(json);
+		return TwitterDAO.postReplySimple(userId, doc);
+	}
 }

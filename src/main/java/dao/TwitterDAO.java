@@ -1,5 +1,6 @@
 package dao;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -308,7 +309,6 @@ public class TwitterDAO {
 	public static Response postReply(String userId, Document document) {
 		StatusUpdate statusUpdate = new StatusUpdate("@" + document.getString("userScreenName") + " " + document.getString("text"));
 		statusUpdate.inReplyToStatusId(Long.parseLong(document.getString("statusId")));
-		System.out.println(statusUpdate.getInReplyToStatusId());
 		try {
 			Status s = TwitterStreamer.getTwitterWriter().updateStatus(statusUpdate);
 			TwitterStatus twitterStatus = new TwitterStatus(s, userId);
@@ -328,6 +328,47 @@ public class TwitterDAO {
 						.append("added", false);
 				json = resp.toJson();
 				status = Response.Status.NOT_MODIFIED;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			Document resp = new Document()
+					.append("added", false)
+					.append("error", e.getMessage());
+			json = resp.toJson();
+			status = Response.Status.INTERNAL_SERVER_ERROR;
+		}
+		return ResponseMonitor.buildResponse(json, status);
+	}
+	
+	/**
+	 * Responde un mensaje de Twitter sin conversación ni seguimiento
+	 * @param empresaId
+	 * @param document
+	 * @return
+	 */
+	public static Response postReplySimple(String empresaId, Document document) {
+		StatusUpdate statusUpdate = new StatusUpdate("@" + document.getString("userScreenName") + " " + document.getString("text"));
+		statusUpdate.inReplyToStatusId(Long.parseLong(document.getString("statusId")));
+		try {
+			Status s = TwitterStreamer.getTwitterWriter().updateStatus(statusUpdate);
+			TwitterStatus twitterStatus = new TwitterStatus(s, empresaId);
+			twitterStatus.setIdConversacion(document.getString("conversacionId"));
+			Datastore db = MorphiaDB.getDatastore();
+			db.save(twitterStatus);
+			Query<ConversacionTwitter> q = db.createQuery(ConversacionTwitter.class)
+					.field("id").equal(new ObjectId(document.getString("conversacionId")));
+			ConversacionTwitter conversacionTwitter = (ConversacionTwitter) q.get();
+			if(conversacionTwitter != null) {
+				conversacionTwitter.addMensaje(twitterStatus);
+				db.save(conversacionTwitter);
+				json = gson.toJson(conversacionTwitter);
+				status = Response.Status.OK;
+			} else {
+				ConversacionTwitter conversacionTwitter2 = new ConversacionTwitter(new Date(), document.getString("userId"), empresaId);
+				conversacionTwitter2.addMensaje(twitterStatus);
+				db.save(conversacionTwitter2);
+				json = gson.toJson(conversacionTwitter2);
+				status = Response.Status.OK;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
