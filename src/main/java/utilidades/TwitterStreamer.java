@@ -62,6 +62,7 @@ public class TwitterStreamer {
 		@Override
 		public void onStatus(Status s) {
 			TwitterDAO.handleNewStatus(s, empresaId);
+			ResponseMonitor.logTweet(s, empresaId);
 		}
 
 		@Override

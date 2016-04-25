@@ -1,7 +1,9 @@
 package utilidades;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +17,7 @@ import org.bson.Document;
 import com.google.gson.Gson;
 
 import mundo.TwitterStatus;
+import twitter4j.Status;
 
 /**
  * Esta clase sirve para enviar respuestas REST sin tener que armarlas siempre, dependiendo de las necesidades <br>
@@ -172,6 +175,16 @@ public class ResponseMonitor {
 				list.put(str[0], str[1]);
 			}
 			br.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void logTweet(Status s, String empId) {
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter("src/tweets/teaching.txt", true));
+			writer.write(s.getText());
+			writer.close();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
