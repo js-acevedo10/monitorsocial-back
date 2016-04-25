@@ -380,6 +380,35 @@ public class TwitterDAO {
 		}
 		return ResponseMonitor.buildResponse(json, status);
 	}
+	
+	public static Response muteMencion(String idUsuario, String idMencion) {
+		try {
+			Datastore db = MorphiaDB.getDatastore();
+			Query<TwitterStatus> q = db.createQuery(TwitterStatus.class)
+					.field("id").equal(new ObjectId(idMencion));
+			TwitterStatus r = (TwitterStatus) q.get();
+			if(r != null) {
+				r.setUnread(true);
+				db.save(r);
+				Document resp = new Document()
+						.append("updated", true);
+				json = resp.toJson();
+				status = Response.Status.OK;
+			} else {
+				Document resp = new Document()
+						.append("updated", false);
+				json = resp.toJson();
+				status = Response.Status.NOT_FOUND;
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+			Document resp = new Document()
+					.append("updated", false);
+			json = resp.toJson();
+			status = Response.Status.INTERNAL_SERVER_ERROR;
+		}
+		return ResponseMonitor.buildResponse(json, status);
+	}
 
 	/**
 	 * Cuando se oye un nuevo status de Twitter que cumple con los filtros, aca se procesa

@@ -5,6 +5,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -96,5 +97,14 @@ public class TwitterResource {
 	public static Response postReplySimple(@PathParam("userId") String userId, String json) {
 		Document doc = Document.parse(json);
 		return TwitterDAO.postReplySimple(userId, doc);
+	}
+	
+	@RolesAllowed(Roles.EMPRESA)
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{userId}/menciones/{mencionId}")
+	public static Response muteMencion(@PathParam("userId") String userId, @PathParam("mencionId") String mencionId) {
+		return TwitterDAO.muteMencion(userId, mencionId);
 	}
 }
