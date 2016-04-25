@@ -157,7 +157,8 @@ public class TwitterDAO {
 		try {
 			Query<TwitterStatus> q = MorphiaDB.getDatastore().createQuery(TwitterStatus.class)
 					.field("unread").equal(true)
-					.field("empresaId").equal(userId);
+					.field("empresaId").equal(userId)
+					.field("esCaso").notEqual(true);
 			List<TwitterStatus> r = (List<TwitterStatus>) q.asList();
 			if(r != null && !r.isEmpty()) {
 				new JSON();
@@ -194,7 +195,8 @@ public class TwitterDAO {
 			Query<TwitterStatus> q = MorphiaDB.getDatastore().createQuery(TwitterStatus.class)
 					.field("unread").equal(true)
 					.field("empresaId").equal(userId)
-					.field("sentimiento").greaterThan(5);
+					.field("sentimiento").greaterThan(5)
+					.field("esCaso").notEqual(true);
 			List<TwitterStatus> r = (List<TwitterStatus>) q.asList();
 			if(r != null && !r.isEmpty()) {
 				new JSON();
@@ -231,7 +233,8 @@ public class TwitterDAO {
 			Query<TwitterStatus> q = MorphiaDB.getDatastore().createQuery(TwitterStatus.class)
 					.field("unread").equal(true)
 					.field("empresaId").equal(userId)
-					.field("sentimiento").lessThan(5);
+					.field("sentimiento").lessThan(5)
+					.field("esCaso").notEqual(true);
 			List<TwitterStatus> r = (List<TwitterStatus>) q.asList();
 			if(r != null && !r.isEmpty()) {
 				new JSON();
@@ -268,7 +271,8 @@ public class TwitterDAO {
 			Query<TwitterStatus> q = MorphiaDB.getDatastore().createQuery(TwitterStatus.class)
 					.field("unread").equal(true)
 					.field("empresaId").equal(userId)
-					.field("sentimiento").equal(5);
+					.field("sentimiento").equal(5)
+					.field("esCaso").notEqual(true);
 			List<TwitterStatus> r = (List<TwitterStatus>) q.asList();
 			if(r != null && !r.isEmpty()) {
 				new JSON();
@@ -351,12 +355,15 @@ public class TwitterDAO {
 				}
 			}
 			Datastore db = MorphiaDB.getDatastore();
-
 			TwitterStatus status = new TwitterStatus(s, empresaId);
+			boolean esCaso = status.getCategoria() != utilidades.Constantes.TWEET_TIPO_OTROS && !status.getInReplyToUserId().equals("-1");
+			boolean esPropio = status.getUserId().equals(System.getenv("twitterUserID"));
 			ResponseMonitor.classifyTweet(status);
+			status.setEsCaso(esCaso);
+			status.setPropio(esPropio);
 			db.save(status);
 
-			if(status.getCategoria() != utilidades.Constantes.TWEET_TIPO_OTROS) {
+			if(esCaso && !esPropio) {
 				TwitterUser user = null;
 				Query<TwitterUser> q = db.createQuery(TwitterUser.class)
 						.field("name").equal(s.getUser().getName())

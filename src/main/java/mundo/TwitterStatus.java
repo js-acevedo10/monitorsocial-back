@@ -22,7 +22,7 @@ public class TwitterStatus {
 	private Date createdAt;
 	private String text, source, placeCountryCode, placeCountry, placeType, placeFullName, placeStreetAddress, empresaId, userName, userScreenName, userProfilePicUrl, userMinProfilePicUrl, categoria;
 	private String idConversacion;
-	private boolean truncated, favorited, retweeted, retweet, unread;
+	private boolean truncated, favorited, retweeted, retweet, unread, esCaso, propio;
 	private int favoriteCount, retweetCount;
 	private double sentimiento;
 	
@@ -282,6 +282,22 @@ public class TwitterStatus {
 
 	public void setIdConversacion(String idConversacion) {
 		this.idConversacion = idConversacion;
+	}
+
+	public boolean esCaso() {
+		return esCaso;
+	}
+
+	public void setEsCaso(boolean esCaso) {
+		this.esCaso = esCaso;
+	}
+
+	public boolean isPropio() {
+		return propio;
+	}
+
+	public void setPropio(boolean propio) {
+		this.propio = propio;
 	}
 	
 }
