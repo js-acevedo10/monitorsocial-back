@@ -164,7 +164,7 @@ public class TwitterDAO {
 				new JSON();
 				Document resp = new Document()
 						.append("found", true)
-						.append("mensajes", JSON.parse(new Gson().toJson(r)))
+						.append("mensajes", JSON.parse(gson.toJson(r)))
 						.append("count", r.size());
 				json = resp.toJson();
 				status = Response.Status.OK;
@@ -202,7 +202,7 @@ public class TwitterDAO {
 				new JSON();
 				Document resp = new Document()
 						.append("found", true)
-						.append("mensajes", JSON.parse(new Gson().toJson(r)))
+						.append("mensajes", JSON.parse(gson.toJson(r)))
 						.append("count", r.size());
 				json = resp.toJson();
 				status = Response.Status.OK;
@@ -240,7 +240,7 @@ public class TwitterDAO {
 				new JSON();
 				Document resp = new Document()
 						.append("found", true)
-						.append("mensajes", JSON.parse(new Gson().toJson(r)))
+						.append("mensajes", JSON.parse(gson.toJson(r)))
 						.append("count", r.size());
 				json = resp.toJson();
 				status = Response.Status.OK;
@@ -278,7 +278,7 @@ public class TwitterDAO {
 				new JSON();
 				Document resp = new Document()
 						.append("found", true)
-						.append("mensajes", JSON.parse(new Gson().toJson(r)))
+						.append("mensajes", JSON.parse(gson.toJson(r)))
 						.append("count", r.size());
 				json = resp.toJson();
 				status = Response.Status.OK;

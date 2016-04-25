@@ -97,6 +97,7 @@ public class ResponseMonitor {
 			loadLists();
 		}
 		StringTokenizer st = new StringTokenizer(tweet.getText(), "[,. #]+-:=()");
+		String origText = tweet.getText().toLowerCase();
 		double positive = 0, negative = 0;
 		String cat = Constantes.TWEET_TIPO_OTROS;
 		while(st.hasMoreTokens()) {
@@ -111,7 +112,7 @@ public class ResponseMonitor {
 				cat = Constantes.TWEET_TIPO_RECLAMO;
 			} else {
 				positive += Double.parseDouble(positiveList.get(next) != null?positiveList.get(next):"0");
-				negative += Double.parseDouble(negativeList.get(next) != null?negativeList.get(next):"0");
+				negative += Double.parseDouble(negativeList.get(next) != null?negativeList.get(next):"0");				
 			}
 		}
 		tweet.setSentimiento(positive-negative==0?5:positive-negative);
