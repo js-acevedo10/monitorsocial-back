@@ -158,7 +158,7 @@ public class TwitterDAO {
 			Query<TwitterStatus> q = MorphiaDB.getDatastore().createQuery(TwitterStatus.class)
 					.field("unread").equal(true)
 					.field("empresaId").equal(userId)
-					.field("esCaso").notEqual(true);
+					.field("propio").equal(false);
 			List<TwitterStatus> r = (List<TwitterStatus>) q.asList();
 			if(r != null && !r.isEmpty()) {
 				new JSON();
@@ -196,7 +196,7 @@ public class TwitterDAO {
 					.field("unread").equal(true)
 					.field("empresaId").equal(userId)
 					.field("sentimiento").greaterThan(5)
-					.field("esCaso").notEqual(true);
+					.field("propio").equal(false);
 			List<TwitterStatus> r = (List<TwitterStatus>) q.asList();
 			if(r != null && !r.isEmpty()) {
 				new JSON();
@@ -234,7 +234,7 @@ public class TwitterDAO {
 					.field("unread").equal(true)
 					.field("empresaId").equal(userId)
 					.field("sentimiento").lessThan(5)
-					.field("esCaso").notEqual(true);
+					.field("propio").equal(false);
 			List<TwitterStatus> r = (List<TwitterStatus>) q.asList();
 			if(r != null && !r.isEmpty()) {
 				new JSON();
@@ -272,7 +272,7 @@ public class TwitterDAO {
 					.field("unread").equal(true)
 					.field("empresaId").equal(userId)
 					.field("sentimiento").equal(5)
-					.field("esCaso").notEqual(true);
+					.field("propio").equal(false);
 			List<TwitterStatus> r = (List<TwitterStatus>) q.asList();
 			if(r != null && !r.isEmpty()) {
 				new JSON();
@@ -357,10 +357,8 @@ public class TwitterDAO {
 			Datastore db = MorphiaDB.getDatastore();
 			TwitterStatus status = new TwitterStatus(s, empresaId);
 			ResponseMonitor.classifyTweet(status);
-			boolean esCaso = status.getCategoria() != utilidades.Constantes.TWEET_TIPO_OTROS && !status.getInReplyToStatusId().equals("-1");
-			System.out.println(esCaso);
+			boolean esCaso = status.getCategoria() != utilidades.Constantes.TWEET_TIPO_OTROS && status.getInReplyToStatusId().equals("-1");
 			boolean esPropio = status.getUserId().equals(System.getenv("twitterUserID"));
-			System.out.println(esPropio);
 			status.setEsCaso(esCaso);
 			status.setPropio(esPropio);
 			db.save(status);
