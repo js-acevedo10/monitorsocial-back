@@ -388,6 +388,7 @@ public class TwitterDAO {
 				db.save(status);
 				user.addCaso(caso);
 				status.setCasoId(caso.getId().toString());
+				db.save(status);
 				db.save(user);
 			}
 		} catch(Exception e) {
