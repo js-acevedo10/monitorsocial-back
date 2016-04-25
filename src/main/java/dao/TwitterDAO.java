@@ -356,7 +356,7 @@ public class TwitterDAO {
 			}
 			Datastore db = MorphiaDB.getDatastore();
 			TwitterStatus status = new TwitterStatus(s, empresaId);
-			boolean esCaso = status.getCategoria() != utilidades.Constantes.TWEET_TIPO_OTROS && !status.getInReplyToStatusId().equals("-1");
+			boolean esCaso = status.getCategoria() != utilidades.Constantes.TWEET_TIPO_OTROS;
 			System.out.println(esCaso);
 			boolean esPropio = status.getUserId().equals(System.getenv("twitterUserID"));
 			System.out.println(esPropio);
