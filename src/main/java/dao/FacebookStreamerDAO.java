@@ -21,5 +21,8 @@ public class FacebookStreamerDAO {
 					.build();
 		}
 	}
-
+	
+	public static void processPost(String body) {
+		System.out.println(body);
+	}
 }
