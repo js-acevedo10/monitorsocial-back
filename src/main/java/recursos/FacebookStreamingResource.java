@@ -27,7 +27,7 @@ public class FacebookStreamingResource {
 	@PermitAll
 	@Consumes(MediaType.APPLICATION_JSON)
 	public static Response post(String body) {
-		FacebookStreamerDAO.prccessPost(body);
+		FacebookStreamerDAO.processPost(body);
 		return Response.status(200).build();
 	}
 }
