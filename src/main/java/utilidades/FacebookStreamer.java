@@ -36,7 +36,7 @@ public class FacebookStreamer {
 	public static void main(String[] args) {
 		Facebook f = getFacebook();
 		try {
-			System.out.println(f.getPage().getName());
+			System.out.println(f.getPage().getId());
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

@@ -23,6 +23,6 @@ public class FacebookStreamerDAO {
 	}
 	
 	public static void processPost(String body) {
-		System.out.println(body);
+		System.out.println("Cuerpo: " + body);
 	}
 }
