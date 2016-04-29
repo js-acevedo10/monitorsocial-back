@@ -4,8 +4,10 @@ import java.util.Calendar;
 import java.util.Timer;
 
 import facebook4j.Facebook;
+import facebook4j.FacebookException;
 import facebook4j.FacebookFactory;
 import facebook4j.auth.AccessToken;
+import facebook4j.internal.org.json.JSONObject;
 
 public class FacebookStreamer {
 
@@ -31,6 +33,12 @@ public class FacebookStreamer {
 			timer.schedule(extender, date.getTime(), 1000*30);
 		}
 		return facebook;
+	}
+	
+	public static void fetchPageConversations() throws FacebookException {
+		facebook = getFacebook();
+		JSONObject jsonObject = facebook.callGetAPI(facebook.getPage().getId() + "/conversations").asJSONObject();
+		System.out.println(jsonObject.toString());
 	}
 
 	public static void main(String[] args) {
