@@ -28,16 +28,20 @@ public class FacebookStreamerDAO {
 	
 	public static void processPost(String body) {
 		try {
+			System.out.println(body);
 			JSONObject jsonObject = new JSONObject(body);
 			String object = jsonObject.getString("object");
 			if(object.equals("page")) {
-				JSONArray arr = jsonObject.getJSONArray("entry").getJSONArray(0);
-				for(int i = 0; i < arr.length(); i++) {
-					String field = arr.getJSONObject(i).getString("field");
+				JSONArray entry = jsonObject.getJSONArray("entry");
+				JSONArray changes = entry.getJSONObject(0).getJSONArray("changes");
+				for(int i = 0; i < changes.length(); i++) {
+					String field = changes.getJSONObject(i).getString("field");
+					JSONObject value = changes.getJSONObject(i).getJSONObject("value");
+					String thread_id = value.getString("thread_id");
 					System.out.println(field);
 					switch (field) {
 					case "conversations":
-						FacebookStreamer.fetchPageConversations();
+						FacebookStreamer.fetchPageConversation(thread_id);
 						break;
 					default:
 						break;
@@ -47,5 +51,9 @@ public class FacebookStreamerDAO {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void main(String[] args) {
+		processPost("{\"entry\":[{\"changes\":[{\"field\":\"conversations\",\"value\":{\"thread_id\":\"t_mid.1461901431620:479d8656e1fd0c4390\",\"page_id\":1452109465045155}}],\"id\":\"1452109465045155\",\"time\":1461903971}],\"object\":\"page\"}");
 	}
 }
